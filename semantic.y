@@ -22,6 +22,8 @@
     TREE_NODE *root;
     TREE_NODE *current_function;
 
+    unsigned variable_type = NO_TYPE;
+
 %}
 
 %union {
@@ -100,9 +102,6 @@ init_program
 
 function_list
     : function 
-		{
-			
-		}
     | function_list function 
     ;
 
@@ -116,43 +115,26 @@ function
                 else {
                     current_function = function;
                 }
-                // printf("%s\n\n", function -> node_data -> name);
-                // printf("%s\t\t\n", function -> parent -> node_data -> name);
-                // print_tree(root);
 				// TODO: OVDE URADIM $ $ = make_function() ali moram izmeniti sta funkcija prima
 				// MSM DA BI TO BIO NACIN DA SE OVO URADDI
             }
-        LPAREN param_list 
-            {
-
-            }
-        RPAREN body
-            {
-
-            }
+        LPAREN param_list RPAREN body
     |   V_TYPE ID
             {
-
+                TREE_NODE *function = make_function(&root, $2, $1);
+                if (!function) {
+                    err("Greska, funckija sa imenom %s vec postoji\n\n", $2);
+                }
+                else {
+                    current_function = function;
+                }
             }
-        LPAREN param_list
-            {
-
-            }
-        RPAREN body 
-            {
-
-            }
+        LPAREN param_list RPAREN body 
     ;
 
 param_list 
-    :   /*  */
-            {
-
-            }
+    :   /*  */ 
     |   parameters
-            {
-
-            }
     ;
 
 parameters
@@ -182,7 +164,7 @@ variable_list
 variable 
     :   TYPE 
             {
-
+                variable_type = $1;
             }
         variables SEMICOLON
     ;
@@ -373,11 +355,13 @@ toreana_opt
 return_statement
     :   RETURN num_exp SEMICOLON
             {
-
+                // if (current_function -> node_data -> type == )
             }
     |   RETURN SEMICOLON
             {
-
+                if (current_function -> node_data -> type != VOID) {
+                    warn("Int/Uint function is without number expression in the return statement");
+                }
             }
     ;
 

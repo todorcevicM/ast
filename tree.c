@@ -118,13 +118,38 @@ TREE_NODE *make_parameter(TREE_NODE **function_node, char* param_name, unsigned 
 unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {
+        unsigned size = 0;
+        size += 36;
+        size += strlen(tree -> node_data -> name);
+        size += 5;
+        
+        if (indent == 2) {
+            size += 1;
+        }
+
         int i = 0;
         for (i = 0; i < indent; i++) {
             printf("\t");
         }
-        indent++;
-        printf("Node name: %s\tNode type: %u\tNode kind: %u\n", 
+        for (i = 0; i < size; i++) {
+            printf("-");
+        }
+        printf("\n");
+        // printf("---------------------------------------------------------\n");
+        for (i = 0; i < indent; i++) {
+            printf("\t");
+        }
+        printf("|Node name: %s; Node type: %u; Node kind: %u|\n", 
             tree -> node_data -> name, tree -> node_data -> type, tree -> node_data -> kind);
+        for (i = 0; i < indent; i++) {
+            printf("\t");
+        }
+        for (i = 0; i < size; i++) {
+            printf("-");
+        }
+        printf("\n");
+        // printf("---------------------------------------------------------\n");
+        indent++;
 
         if (tree -> node_data -> kind == FUN) {
             if (print_tree(tree -> parameter)) {

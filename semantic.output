@@ -11,114 +11,110 @@ Grammar
 
     5 $@1: %empty
 
-    6 $@2: %empty
+    6 function: TYPE ID $@1 LPAREN param_list RPAREN body
 
-    7 function: TYPE ID $@1 LPAREN param_list $@2 RPAREN body
+    7 $@2: %empty
 
-    8 $@3: %empty
+    8 function: V_TYPE ID $@2 LPAREN param_list RPAREN body
 
-    9 $@4: %empty
+    9 param_list: %empty
+   10           | parameters
 
-   10 function: V_TYPE ID $@3 LPAREN param_list $@4 RPAREN body
+   11 parameters: parameter
+   12           | parameters COMMA parameter
 
-   11 param_list: %empty
-   12           | parameters
+   13 parameter: TYPE ID
 
-   13 parameters: parameter
-   14           | parameters COMMA parameter
+   14 body: LBRACKET variable_list statement_list RBRACKET
 
-   15 parameter: TYPE ID
+   15 variable_list: %empty
+   16              | variable_list variable
 
-   16 body: LBRACKET variable_list statement_list RBRACKET
+   17 $@3: %empty
 
-   17 variable_list: %empty
-   18              | variable_list variable
+   18 variable: TYPE $@3 variables SEMICOLON
 
-   19 $@5: %empty
+   19 variables: ID
+   20          | variables COMMA ID
 
-   20 variable: TYPE $@5 variables SEMICOLON
+   21 statement_list: %empty
+   22               | statements
 
-   21 variables: ID
-   22          | variables COMMA ID
+   23 statements: statement
+   24           | statements statement
 
-   23 statement_list: %empty
-   24               | statements
+   25 statement: compound_statement
+   26          | assignment_statement
+   27          | function_call SEMICOLON
+   28          | if_statement
+   29          | loop_statement
+   30          | jiro_statement
+   31          | return_statement
 
-   25 statements: statement
-   26           | statements statement
+   32 compound_statement: LBRACKET statement_list RBRACKET
 
-   27 statement: compound_statement
-   28          | assignment_statement
-   29          | function_call SEMICOLON
-   30          | if_statement
-   31          | loop_statement
-   32          | jiro_statement
-   33          | return_statement
+   33 assignment_statement: ID ASSIGN num_exp SEMICOLON
 
-   34 compound_statement: LBRACKET statement_list RBRACKET
+   34 num_exp: exp
+   35        | num_exp AROP exp
 
-   35 assignment_statement: ID ASSIGN num_exp SEMICOLON
+   36 exp: literal
+   37    | ID post_op
+   38    | function_call
+   39    | LPAREN num_exp RPAREN
 
-   36 num_exp: exp
-   37        | num_exp AROP exp
+   40 post_op: %empty
+   41        | PINC
+   42        | PDEC
 
-   38 exp: literal
-   39    | ID post_op
-   40    | function_call
-   41    | LPAREN num_exp RPAREN
+   43 literal: INT_NUMBER
+   44        | UINT_NUMBER
 
-   42 post_op: %empty
-   43        | PINC
-   44        | PDEC
+   45 $@4: %empty
 
-   45 literal: INT_NUMBER
-   46        | UINT_NUMBER
+   46 function_call: ID $@4 LPAREN argument_s RPAREN
 
-   47 $@6: %empty
+   47 argument_s: %empty
+   48           | arguments
 
-   48 function_call: ID $@6 LPAREN argument_s RPAREN
+   49 arguments: num_exp
+   50          | arguments COMMA num_exp
 
-   49 argument_s: %empty
-   50           | arguments
+   51 if_statement: if_part
+   52             | if_part ELSE statement
 
-   51 arguments: num_exp
-   52          | arguments COMMA num_exp
+   53 if_part: IF LPAREN rel_exp RPAREN statement
 
-   53 if_statement: if_part
-   54             | if_part ELSE statement
+   54 rel_exp: num_exp RELOP num_exp
 
-   55 if_part: IF LPAREN rel_exp RPAREN statement
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
 
-   56 rel_exp: num_exp RELOP num_exp
+   56 loop_opt: %empty
+   57         | COMMA literal
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
+   58 $@5: %empty
 
-   58 loop_opt: %empty
-   59         | COMMA literal
+   59 $@6: %empty
 
-   60 $@7: %empty
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-   61 $@8: %empty
+   61 jiro_exp: ID
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   62 $@7: %empty
 
-   63 jiro_exp: ID
+   63 tranga_body: TRANGA literal $@7 DO statement finish_opt
 
-   64 $@9: %empty
+   64 finish_opt: %empty
+   65           | FINISH SEMICOLON
 
-   65 tranga_body: TRANGA literal $@9 DO statement finish_opt
+   66 tranga_opt: %empty
+   67           | tranga_body tranga_opt
 
-   66 finish_opt: %empty
-   67           | FINISH SEMICOLON
+   68 toreana_opt: %empty
+   69            | TOREANA DO statement
 
-   68 tranga_opt: %empty
-   69           | tranga_body tranga_opt
-
-   70 toreana_opt: %empty
-   71            | TOREANA DO statement
-
-   72 return_statement: RETURN num_exp SEMICOLON
-   73                 | RETURN SEMICOLON
+   70 return_statement: RETURN num_exp SEMICOLON
+   71                 | RETURN SEMICOLON
 
 
 Terminals, with rules where they appear
@@ -126,33 +122,33 @@ Terminals, with rules where they appear
     $end (0) 0
     error (256)
     INIT (258) 2
-    TYPE <i> (259) 7 15 20
-    V_TYPE <i> (260) 10
-    ID <s> (261) 7 10 15 21 22 35 39 48 57 63
-    INT_NUMBER <s> (262) 45
-    UINT_NUMBER <s> (263) 46
-    IF (264) 55
-    ELSE (265) 54
-    RETURN (266) 72 73
-    LOOP (267) 57
-    JIRO (268) 62
-    TRANGA (269) 65
-    TOREANA (270) 71
-    FINISH (271) 67
-    LABRACKET (272) 62
-    RABRACKET (273) 62
-    DO (274) 65 71
-    SEMICOLON (275) 2 20 29 35 67 72 73
-    COMMA (276) 14 22 52 57 59
-    LPAREN (277) 7 10 41 48 55 57
-    RPAREN (278) 7 10 41 48 55 57
-    LBRACKET (279) 16 34 62
-    RBRACKET (280) 16 34 62
-    ASSIGN (281) 35
-    AROP <i> (282) 37
-    PINC (283) 43
-    PDEC (284) 44
-    RELOP <i> (285) 56
+    TYPE <i> (259) 6 13 18
+    V_TYPE <i> (260) 8
+    ID <s> (261) 6 8 13 19 20 33 37 46 55 61
+    INT_NUMBER <s> (262) 43
+    UINT_NUMBER <s> (263) 44
+    IF (264) 53
+    ELSE (265) 52
+    RETURN (266) 70 71
+    LOOP (267) 55
+    JIRO (268) 60
+    TRANGA (269) 63
+    TOREANA (270) 69
+    FINISH (271) 65
+    LABRACKET (272) 60
+    RABRACKET (273) 60
+    DO (274) 63 69
+    SEMICOLON (275) 2 18 27 33 65 70 71
+    COMMA (276) 12 20 50 55 57
+    LPAREN (277) 6 8 39 46 53 55
+    RPAREN (278) 6 8 39 46 53 55
+    LBRACKET (279) 14 32 60
+    RBRACKET (280) 14 32 60
+    ASSIGN (281) 33
+    AROP <i> (282) 35
+    PINC (283) 41
+    PDEC (284) 42
+    RELOP <i> (285) 54
     ONLY_IF (286)
 
 
@@ -170,128 +166,122 @@ Nonterminals, with rules where they appear
         on left: 3 4
         on right: 1 4
     function (36)
-        on left: 7 10
+        on left: 6 8
         on right: 3 4
     $@1 (37)
         on left: 5
-        on right: 7
+        on right: 6
     $@2 (38)
-        on left: 6
-        on right: 7
-    $@3 (39)
-        on left: 8
-        on right: 10
-    $@4 (40)
-        on left: 9
-        on right: 10
-    param_list (41)
+        on left: 7
+        on right: 8
+    param_list (39)
+        on left: 9 10
+        on right: 6 8
+    parameters (40)
         on left: 11 12
-        on right: 7 10
-    parameters (42)
-        on left: 13 14
-        on right: 12 14
-    parameter (43)
-        on left: 15
-        on right: 13 14
-    body (44)
-        on left: 16
-        on right: 7 10
-    variable_list (45)
-        on left: 17 18
-        on right: 16 18
-    variable (46)
-        on left: 20
+        on right: 10 12
+    parameter (41)
+        on left: 13
+        on right: 11 12
+    body (42)
+        on left: 14
+        on right: 6 8
+    variable_list (43)
+        on left: 15 16
+        on right: 14 16
+    variable (44)
+        on left: 18
+        on right: 16
+    $@3 (45)
+        on left: 17
         on right: 18
-    $@5 (47)
-        on left: 19
-        on right: 20
-    variables (48)
+    variables (46)
+        on left: 19 20
+        on right: 18 20
+    statement_list (47)
         on left: 21 22
-        on right: 20 22
-    statement_list (49)
+        on right: 14 32
+    statements (48)
         on left: 23 24
-        on right: 16 34
-    statements (50)
-        on left: 25 26
-        on right: 24 26
-    statement (51)
-        on left: 27 28 29 30 31 32 33
-        on right: 25 26 54 55 57 65 71
-    compound_statement (52)
-        on left: 34
-        on right: 27
-    assignment_statement (53)
-        on left: 35
-        on right: 28
-    num_exp <i> (54)
-        on left: 36 37
-        on right: 35 37 41 51 52 56 72
-    exp <i> (55)
-        on left: 38 39 40 41
-        on right: 36 37
-    post_op (56)
-        on left: 42 43 44
-        on right: 39
-    literal <i> (57)
-        on left: 45 46
-        on right: 38 57 59 65
-    function_call <i> (58)
-        on left: 48
-        on right: 29 40
-    $@6 (59)
-        on left: 47
-        on right: 48
-    argument_s (60)
+        on right: 22 24
+    statement (49)
+        on left: 25 26 27 28 29 30 31
+        on right: 23 24 52 53 55 63 69
+    compound_statement (50)
+        on left: 32
+        on right: 25
+    assignment_statement (51)
+        on left: 33
+        on right: 26
+    num_exp <i> (52)
+        on left: 34 35
+        on right: 33 35 39 49 50 54 70
+    exp <i> (53)
+        on left: 36 37 38 39
+        on right: 34 35
+    post_op (54)
+        on left: 40 41 42
+        on right: 37
+    literal <i> (55)
+        on left: 43 44
+        on right: 36 55 57 63
+    function_call <i> (56)
+        on left: 46
+        on right: 27 38
+    $@4 (57)
+        on left: 45
+        on right: 46
+    argument_s (58)
+        on left: 47 48
+        on right: 46
+    arguments <i> (59)
         on left: 49 50
-        on right: 48
-    arguments <i> (61)
+        on right: 48 50
+    if_statement (60)
         on left: 51 52
-        on right: 50 52
-    if_statement (62)
-        on left: 53 54
-        on right: 30
-    if_part (63)
+        on right: 28
+    if_part (61)
+        on left: 53
+        on right: 51 52
+    rel_exp <i> (62)
+        on left: 54
+        on right: 53
+    loop_statement (63)
         on left: 55
-        on right: 53 54
-    rel_exp <i> (64)
-        on left: 56
+        on right: 29
+    loop_opt (64)
+        on left: 56 57
         on right: 55
-    loop_statement (65)
-        on left: 57
-        on right: 31
-    loop_opt (66)
-        on left: 58 59
-        on right: 57
-    jiro_statement (67)
-        on left: 62
-        on right: 32
-    $@7 (68)
+    jiro_statement (65)
         on left: 60
-        on right: 62
-    $@8 (69)
+        on right: 30
+    $@5 (66)
+        on left: 58
+        on right: 60
+    $@6 (67)
+        on left: 59
+        on right: 60
+    jiro_exp (68)
         on left: 61
-        on right: 62
-    jiro_exp (70)
+        on right: 60
+    tranga_body (69)
         on left: 63
-        on right: 62
-    tranga_body (71)
-        on left: 65
-        on right: 62 69
-    $@9 (72)
-        on left: 64
-        on right: 65
-    finish_opt (73)
+        on right: 60 67
+    $@7 (70)
+        on left: 62
+        on right: 63
+    finish_opt (71)
+        on left: 64 65
+        on right: 63
+    tranga_opt (72)
         on left: 66 67
-        on right: 65
-    tranga_opt (74)
+        on right: 60 67
+    toreana_opt (73)
         on left: 68 69
-        on right: 62 69
-    toreana_opt (75)
+        on right: 60
+    return_statement (74)
         on left: 70 71
-        on right: 62
-    return_statement (76)
-        on left: 72 73
-        on right: 33
+        on right: 31
 
 
 State 0
@@ -345,14 +335,14 @@ State 5
 
 State 6
 
-    7 function: TYPE . ID $@1 LPAREN param_list $@2 RPAREN body
+    6 function: TYPE . ID $@1 LPAREN param_list RPAREN body
 
     ID  shift, and go to state 10
 
 
 State 7
 
-   10 function: V_TYPE . ID $@3 LPAREN param_list $@4 RPAREN body
+    8 function: V_TYPE . ID $@2 LPAREN param_list RPAREN body
 
     ID  shift, and go to state 11
 
@@ -379,7 +369,7 @@ State 9
 
 State 10
 
-    7 function: TYPE ID . $@1 LPAREN param_list $@2 RPAREN body
+    6 function: TYPE ID . $@1 LPAREN param_list RPAREN body
 
     $default  reduce using rule 5 ($@1)
 
@@ -388,11 +378,11 @@ State 10
 
 State 11
 
-   10 function: V_TYPE ID . $@3 LPAREN param_list $@4 RPAREN body
+    8 function: V_TYPE ID . $@2 LPAREN param_list RPAREN body
 
-    $default  reduce using rule 8 ($@3)
+    $default  reduce using rule 7 ($@2)
 
-    $@3  go to state 14
+    $@2  go to state 14
 
 
 State 12
@@ -404,25 +394,25 @@ State 12
 
 State 13
 
-    7 function: TYPE ID $@1 . LPAREN param_list $@2 RPAREN body
+    6 function: TYPE ID $@1 . LPAREN param_list RPAREN body
 
     LPAREN  shift, and go to state 15
 
 
 State 14
 
-   10 function: V_TYPE ID $@3 . LPAREN param_list $@4 RPAREN body
+    8 function: V_TYPE ID $@2 . LPAREN param_list RPAREN body
 
     LPAREN  shift, and go to state 16
 
 
 State 15
 
-    7 function: TYPE ID $@1 LPAREN . param_list $@2 RPAREN body
+    6 function: TYPE ID $@1 LPAREN . param_list RPAREN body
 
     TYPE  shift, and go to state 17
 
-    $default  reduce using rule 11 (param_list)
+    $default  reduce using rule 9 (param_list)
 
     param_list  go to state 18
     parameters  go to state 19
@@ -431,11 +421,11 @@ State 15
 
 State 16
 
-   10 function: V_TYPE ID $@3 LPAREN . param_list $@4 RPAREN body
+    8 function: V_TYPE ID $@2 LPAREN . param_list RPAREN body
 
     TYPE  shift, and go to state 17
 
-    $default  reduce using rule 11 (param_list)
+    $default  reduce using rule 9 (param_list)
 
     param_list  go to state 21
     parameters  go to state 19
@@ -444,1130 +434,1112 @@ State 16
 
 State 17
 
-   15 parameter: TYPE . ID
+   13 parameter: TYPE . ID
 
     ID  shift, and go to state 22
 
 
 State 18
 
-    7 function: TYPE ID $@1 LPAREN param_list . $@2 RPAREN body
+    6 function: TYPE ID $@1 LPAREN param_list . RPAREN body
 
-    $default  reduce using rule 6 ($@2)
-
-    $@2  go to state 23
+    RPAREN  shift, and go to state 23
 
 
 State 19
 
-   12 param_list: parameters .
-   14 parameters: parameters . COMMA parameter
+   10 param_list: parameters .
+   12 parameters: parameters . COMMA parameter
 
     COMMA  shift, and go to state 24
 
-    $default  reduce using rule 12 (param_list)
+    $default  reduce using rule 10 (param_list)
 
 
 State 20
 
-   13 parameters: parameter .
+   11 parameters: parameter .
 
-    $default  reduce using rule 13 (parameters)
+    $default  reduce using rule 11 (parameters)
 
 
 State 21
 
-   10 function: V_TYPE ID $@3 LPAREN param_list . $@4 RPAREN body
+    8 function: V_TYPE ID $@2 LPAREN param_list . RPAREN body
 
-    $default  reduce using rule 9 ($@4)
-
-    $@4  go to state 25
+    RPAREN  shift, and go to state 25
 
 
 State 22
 
-   15 parameter: TYPE ID .
+   13 parameter: TYPE ID .
 
-    $default  reduce using rule 15 (parameter)
+    $default  reduce using rule 13 (parameter)
 
 
 State 23
 
-    7 function: TYPE ID $@1 LPAREN param_list $@2 . RPAREN body
+    6 function: TYPE ID $@1 LPAREN param_list RPAREN . body
 
-    RPAREN  shift, and go to state 26
+    LBRACKET  shift, and go to state 26
+
+    body  go to state 27
 
 
 State 24
 
-   14 parameters: parameters COMMA . parameter
+   12 parameters: parameters COMMA . parameter
 
     TYPE  shift, and go to state 17
 
-    parameter  go to state 27
+    parameter  go to state 28
 
 
 State 25
 
-   10 function: V_TYPE ID $@3 LPAREN param_list $@4 . RPAREN body
+    8 function: V_TYPE ID $@2 LPAREN param_list RPAREN . body
 
-    RPAREN  shift, and go to state 28
+    LBRACKET  shift, and go to state 26
+
+    body  go to state 29
 
 
 State 26
 
-    7 function: TYPE ID $@1 LPAREN param_list $@2 RPAREN . body
+   14 body: LBRACKET . variable_list statement_list RBRACKET
 
-    LBRACKET  shift, and go to state 29
+    $default  reduce using rule 15 (variable_list)
 
-    body  go to state 30
+    variable_list  go to state 30
 
 
 State 27
 
-   14 parameters: parameters COMMA parameter .
+    6 function: TYPE ID $@1 LPAREN param_list RPAREN body .
 
-    $default  reduce using rule 14 (parameters)
+    $default  reduce using rule 6 (function)
 
 
 State 28
 
-   10 function: V_TYPE ID $@3 LPAREN param_list $@4 RPAREN . body
+   12 parameters: parameters COMMA parameter .
 
-    LBRACKET  shift, and go to state 29
-
-    body  go to state 31
+    $default  reduce using rule 12 (parameters)
 
 
 State 29
 
-   16 body: LBRACKET . variable_list statement_list RBRACKET
+    8 function: V_TYPE ID $@2 LPAREN param_list RPAREN body .
 
-    $default  reduce using rule 17 (variable_list)
-
-    variable_list  go to state 32
+    $default  reduce using rule 8 (function)
 
 
 State 30
 
-    7 function: TYPE ID $@1 LPAREN param_list $@2 RPAREN body .
+   14 body: LBRACKET variable_list . statement_list RBRACKET
+   16 variable_list: variable_list . variable
 
-    $default  reduce using rule 7 (function)
+    TYPE      shift, and go to state 31
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
+
+    $default  reduce using rule 21 (statement_list)
+
+    variable              go to state 38
+    statement_list        go to state 39
+    statements            go to state 40
+    statement             go to state 41
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 31
 
-   10 function: V_TYPE ID $@3 LPAREN param_list $@4 RPAREN body .
+   18 variable: TYPE . $@3 variables SEMICOLON
 
-    $default  reduce using rule 10 (function)
+    $default  reduce using rule 17 ($@3)
+
+    $@3  go to state 50
 
 
 State 32
 
-   16 body: LBRACKET variable_list . statement_list RBRACKET
-   18 variable_list: variable_list . variable
+   33 assignment_statement: ID . ASSIGN num_exp SEMICOLON
+   46 function_call: ID . $@4 LPAREN argument_s RPAREN
 
-    TYPE      shift, and go to state 33
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
+    ASSIGN  shift, and go to state 51
 
-    $default  reduce using rule 23 (statement_list)
+    $default  reduce using rule 45 ($@4)
 
-    variable              go to state 40
-    statement_list        go to state 41
-    statements            go to state 42
-    statement             go to state 43
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    $@4  go to state 52
 
 
 State 33
 
-   20 variable: TYPE . $@5 variables SEMICOLON
+   53 if_part: IF . LPAREN rel_exp RPAREN statement
 
-    $default  reduce using rule 19 ($@5)
-
-    $@5  go to state 52
+    LPAREN  shift, and go to state 53
 
 
 State 34
 
-   35 assignment_statement: ID . ASSIGN num_exp SEMICOLON
-   48 function_call: ID . $@6 LPAREN argument_s RPAREN
+   70 return_statement: RETURN . num_exp SEMICOLON
+   71                 | RETURN . SEMICOLON
 
-    ASSIGN  shift, and go to state 53
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    SEMICOLON    shift, and go to state 57
+    LPAREN       shift, and go to state 58
 
-    $default  reduce using rule 47 ($@6)
-
-    $@6  go to state 54
+    num_exp        go to state 59
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 35
 
-   55 if_part: IF . LPAREN rel_exp RPAREN statement
+   55 loop_statement: LOOP . LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
 
-    LPAREN  shift, and go to state 55
+    LPAREN  shift, and go to state 63
 
 
 State 36
 
-   72 return_statement: RETURN . num_exp SEMICOLON
-   73                 | RETURN . SEMICOLON
+   60 jiro_statement: JIRO . $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    SEMICOLON    shift, and go to state 59
-    LPAREN       shift, and go to state 60
+    $default  reduce using rule 58 ($@5)
 
-    num_exp        go to state 61
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
+    $@5  go to state 64
 
 
 State 37
 
-   57 loop_statement: LOOP . LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
+   32 compound_statement: LBRACKET . statement_list RBRACKET
 
-    LPAREN  shift, and go to state 65
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
+
+    $default  reduce using rule 21 (statement_list)
+
+    statement_list        go to state 65
+    statements            go to state 40
+    statement             go to state 41
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 38
 
-   62 jiro_statement: JIRO . $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   16 variable_list: variable_list variable .
 
-    $default  reduce using rule 60 ($@7)
-
-    $@7  go to state 66
+    $default  reduce using rule 16 (variable_list)
 
 
 State 39
 
-   34 compound_statement: LBRACKET . statement_list RBRACKET
+   14 body: LBRACKET variable_list statement_list . RBRACKET
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    $default  reduce using rule 23 (statement_list)
-
-    statement_list        go to state 67
-    statements            go to state 42
-    statement             go to state 43
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    RBRACKET  shift, and go to state 66
 
 
 State 40
 
-   18 variable_list: variable_list variable .
+   22 statement_list: statements .
+   24 statements: statements . statement
 
-    $default  reduce using rule 18 (variable_list)
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
+
+    $default  reduce using rule 22 (statement_list)
+
+    statement             go to state 67
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 41
 
-   16 body: LBRACKET variable_list statement_list . RBRACKET
+   23 statements: statement .
 
-    RBRACKET  shift, and go to state 68
+    $default  reduce using rule 23 (statements)
 
 
 State 42
 
-   24 statement_list: statements .
-   26 statements: statements . statement
+   25 statement: compound_statement .
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    $default  reduce using rule 24 (statement_list)
-
-    statement             go to state 69
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    $default  reduce using rule 25 (statement)
 
 
 State 43
 
-   25 statements: statement .
+   26 statement: assignment_statement .
 
-    $default  reduce using rule 25 (statements)
+    $default  reduce using rule 26 (statement)
 
 
 State 44
 
-   27 statement: compound_statement .
+   27 statement: function_call . SEMICOLON
 
-    $default  reduce using rule 27 (statement)
+    SEMICOLON  shift, and go to state 68
 
 
 State 45
 
-   28 statement: assignment_statement .
+   28 statement: if_statement .
 
     $default  reduce using rule 28 (statement)
 
 
 State 46
 
-   29 statement: function_call . SEMICOLON
+   51 if_statement: if_part .
+   52             | if_part . ELSE statement
 
-    SEMICOLON  shift, and go to state 70
+    ELSE  shift, and go to state 69
+
+    $default  reduce using rule 51 (if_statement)
 
 
 State 47
 
-   30 statement: if_statement .
+   29 statement: loop_statement .
 
-    $default  reduce using rule 30 (statement)
+    $default  reduce using rule 29 (statement)
 
 
 State 48
 
-   53 if_statement: if_part .
-   54             | if_part . ELSE statement
+   30 statement: jiro_statement .
 
-    ELSE  shift, and go to state 71
-
-    $default  reduce using rule 53 (if_statement)
+    $default  reduce using rule 30 (statement)
 
 
 State 49
 
-   31 statement: loop_statement .
+   31 statement: return_statement .
 
     $default  reduce using rule 31 (statement)
 
 
 State 50
 
-   32 statement: jiro_statement .
+   18 variable: TYPE $@3 . variables SEMICOLON
 
-    $default  reduce using rule 32 (statement)
+    ID  shift, and go to state 70
+
+    variables  go to state 71
 
 
 State 51
 
-   33 statement: return_statement .
+   33 assignment_statement: ID ASSIGN . num_exp SEMICOLON
 
-    $default  reduce using rule 33 (statement)
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    num_exp        go to state 72
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 52
 
-   20 variable: TYPE $@5 . variables SEMICOLON
+   46 function_call: ID $@4 . LPAREN argument_s RPAREN
 
-    ID  shift, and go to state 72
-
-    variables  go to state 73
+    LPAREN  shift, and go to state 73
 
 
 State 53
 
-   35 assignment_statement: ID ASSIGN . num_exp SEMICOLON
+   53 if_part: IF LPAREN . rel_exp RPAREN statement
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
 
     num_exp        go to state 74
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
+    rel_exp        go to state 75
 
 
 State 54
 
-   48 function_call: ID $@6 . LPAREN argument_s RPAREN
+   37 exp: ID . post_op
+   46 function_call: ID . $@4 LPAREN argument_s RPAREN
 
-    LPAREN  shift, and go to state 75
+    PINC  shift, and go to state 76
+    PDEC  shift, and go to state 77
+
+    LPAREN    reduce using rule 45 ($@4)
+    $default  reduce using rule 40 (post_op)
+
+    post_op  go to state 78
+    $@4      go to state 52
 
 
 State 55
 
-   55 if_part: IF LPAREN . rel_exp RPAREN statement
+   43 literal: INT_NUMBER .
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
-
-    num_exp        go to state 76
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
-    rel_exp        go to state 77
+    $default  reduce using rule 43 (literal)
 
 
 State 56
 
-   39 exp: ID . post_op
-   48 function_call: ID . $@6 LPAREN argument_s RPAREN
+   44 literal: UINT_NUMBER .
 
-    PINC  shift, and go to state 78
-    PDEC  shift, and go to state 79
-
-    LPAREN    reduce using rule 47 ($@6)
-    $default  reduce using rule 42 (post_op)
-
-    post_op  go to state 80
-    $@6      go to state 54
+    $default  reduce using rule 44 (literal)
 
 
 State 57
 
-   45 literal: INT_NUMBER .
+   71 return_statement: RETURN SEMICOLON .
 
-    $default  reduce using rule 45 (literal)
+    $default  reduce using rule 71 (return_statement)
 
 
 State 58
 
-   46 literal: UINT_NUMBER .
+   39 exp: LPAREN . num_exp RPAREN
 
-    $default  reduce using rule 46 (literal)
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    num_exp        go to state 79
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 59
 
-   73 return_statement: RETURN SEMICOLON .
+   35 num_exp: num_exp . AROP exp
+   70 return_statement: RETURN num_exp . SEMICOLON
 
-    $default  reduce using rule 73 (return_statement)
+    SEMICOLON  shift, and go to state 80
+    AROP       shift, and go to state 81
 
 
 State 60
 
-   41 exp: LPAREN . num_exp RPAREN
+   34 num_exp: exp .
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
-
-    num_exp        go to state 81
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
+    $default  reduce using rule 34 (num_exp)
 
 
 State 61
 
-   37 num_exp: num_exp . AROP exp
-   72 return_statement: RETURN num_exp . SEMICOLON
+   36 exp: literal .
 
-    SEMICOLON  shift, and go to state 82
-    AROP       shift, and go to state 83
+    $default  reduce using rule 36 (exp)
 
 
 State 62
 
-   36 num_exp: exp .
-
-    $default  reduce using rule 36 (num_exp)
-
-
-State 63
-
-   38 exp: literal .
+   38 exp: function_call .
 
     $default  reduce using rule 38 (exp)
 
 
+State 63
+
+   55 loop_statement: LOOP LPAREN . ID COMMA literal COMMA literal loop_opt RPAREN statement
+
+    ID  shift, and go to state 82
+
+
 State 64
 
-   40 exp: function_call .
+   60 jiro_statement: JIRO $@5 . LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    $default  reduce using rule 40 (exp)
+    LABRACKET  shift, and go to state 83
 
 
 State 65
 
-   57 loop_statement: LOOP LPAREN . ID COMMA literal COMMA literal loop_opt RPAREN statement
+   32 compound_statement: LBRACKET statement_list . RBRACKET
 
-    ID  shift, and go to state 84
+    RBRACKET  shift, and go to state 84
 
 
 State 66
 
-   62 jiro_statement: JIRO $@7 . LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   14 body: LBRACKET variable_list statement_list RBRACKET .
 
-    LABRACKET  shift, and go to state 85
+    $default  reduce using rule 14 (body)
 
 
 State 67
 
-   34 compound_statement: LBRACKET statement_list . RBRACKET
+   24 statements: statements statement .
 
-    RBRACKET  shift, and go to state 86
+    $default  reduce using rule 24 (statements)
 
 
 State 68
 
-   16 body: LBRACKET variable_list statement_list RBRACKET .
+   27 statement: function_call SEMICOLON .
 
-    $default  reduce using rule 16 (body)
+    $default  reduce using rule 27 (statement)
 
 
 State 69
 
-   26 statements: statements statement .
+   52 if_statement: if_part ELSE . statement
 
-    $default  reduce using rule 26 (statements)
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
+
+    statement             go to state 85
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 70
 
-   29 statement: function_call SEMICOLON .
+   19 variables: ID .
 
-    $default  reduce using rule 29 (statement)
+    $default  reduce using rule 19 (variables)
 
 
 State 71
 
-   54 if_statement: if_part ELSE . statement
+   18 variable: TYPE $@3 variables . SEMICOLON
+   20 variables: variables . COMMA ID
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    statement             go to state 87
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    SEMICOLON  shift, and go to state 86
+    COMMA      shift, and go to state 87
 
 
 State 72
 
-   21 variables: ID .
+   33 assignment_statement: ID ASSIGN num_exp . SEMICOLON
+   35 num_exp: num_exp . AROP exp
 
-    $default  reduce using rule 21 (variables)
+    SEMICOLON  shift, and go to state 88
+    AROP       shift, and go to state 81
 
 
 State 73
 
-   20 variable: TYPE $@5 variables . SEMICOLON
-   22 variables: variables . COMMA ID
+   46 function_call: ID $@4 LPAREN . argument_s RPAREN
 
-    SEMICOLON  shift, and go to state 88
-    COMMA      shift, and go to state 89
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    $default  reduce using rule 47 (argument_s)
+
+    num_exp        go to state 89
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
+    argument_s     go to state 90
+    arguments      go to state 91
 
 
 State 74
 
-   35 assignment_statement: ID ASSIGN num_exp . SEMICOLON
-   37 num_exp: num_exp . AROP exp
+   35 num_exp: num_exp . AROP exp
+   54 rel_exp: num_exp . RELOP num_exp
 
-    SEMICOLON  shift, and go to state 90
-    AROP       shift, and go to state 83
+    AROP   shift, and go to state 81
+    RELOP  shift, and go to state 92
 
 
 State 75
 
-   48 function_call: ID $@6 LPAREN . argument_s RPAREN
+   53 if_part: IF LPAREN rel_exp . RPAREN statement
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
-
-    $default  reduce using rule 49 (argument_s)
-
-    num_exp        go to state 91
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
-    argument_s     go to state 92
-    arguments      go to state 93
+    RPAREN  shift, and go to state 93
 
 
 State 76
 
-   37 num_exp: num_exp . AROP exp
-   56 rel_exp: num_exp . RELOP num_exp
+   41 post_op: PINC .
 
-    AROP   shift, and go to state 83
-    RELOP  shift, and go to state 94
+    $default  reduce using rule 41 (post_op)
 
 
 State 77
 
-   55 if_part: IF LPAREN rel_exp . RPAREN statement
+   42 post_op: PDEC .
 
-    RPAREN  shift, and go to state 95
+    $default  reduce using rule 42 (post_op)
 
 
 State 78
 
-   43 post_op: PINC .
+   37 exp: ID post_op .
 
-    $default  reduce using rule 43 (post_op)
+    $default  reduce using rule 37 (exp)
 
 
 State 79
 
-   44 post_op: PDEC .
+   35 num_exp: num_exp . AROP exp
+   39 exp: LPAREN num_exp . RPAREN
 
-    $default  reduce using rule 44 (post_op)
+    RPAREN  shift, and go to state 94
+    AROP    shift, and go to state 81
 
 
 State 80
 
-   39 exp: ID post_op .
+   70 return_statement: RETURN num_exp SEMICOLON .
 
-    $default  reduce using rule 39 (exp)
+    $default  reduce using rule 70 (return_statement)
 
 
 State 81
 
-   37 num_exp: num_exp . AROP exp
-   41 exp: LPAREN num_exp . RPAREN
+   35 num_exp: num_exp AROP . exp
 
-    RPAREN  shift, and go to state 96
-    AROP    shift, and go to state 83
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    exp            go to state 95
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 82
 
-   72 return_statement: RETURN num_exp SEMICOLON .
+   55 loop_statement: LOOP LPAREN ID . COMMA literal COMMA literal loop_opt RPAREN statement
 
-    $default  reduce using rule 72 (return_statement)
+    COMMA  shift, and go to state 96
 
 
 State 83
 
-   37 num_exp: num_exp AROP . exp
+   60 jiro_statement: JIRO $@5 LABRACKET . jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
+    ID  shift, and go to state 97
 
-    exp            go to state 97
-    literal        go to state 63
-    function_call  go to state 64
+    jiro_exp  go to state 98
 
 
 State 84
 
-   57 loop_statement: LOOP LPAREN ID . COMMA literal COMMA literal loop_opt RPAREN statement
+   32 compound_statement: LBRACKET statement_list RBRACKET .
 
-    COMMA  shift, and go to state 98
+    $default  reduce using rule 32 (compound_statement)
 
 
 State 85
 
-   62 jiro_statement: JIRO $@7 LABRACKET . jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   52 if_statement: if_part ELSE statement .
 
-    ID  shift, and go to state 99
-
-    jiro_exp  go to state 100
+    $default  reduce using rule 52 (if_statement)
 
 
 State 86
 
-   34 compound_statement: LBRACKET statement_list RBRACKET .
+   18 variable: TYPE $@3 variables SEMICOLON .
 
-    $default  reduce using rule 34 (compound_statement)
+    $default  reduce using rule 18 (variable)
 
 
 State 87
 
-   54 if_statement: if_part ELSE statement .
+   20 variables: variables COMMA . ID
 
-    $default  reduce using rule 54 (if_statement)
+    ID  shift, and go to state 99
 
 
 State 88
 
-   20 variable: TYPE $@5 variables SEMICOLON .
+   33 assignment_statement: ID ASSIGN num_exp SEMICOLON .
 
-    $default  reduce using rule 20 (variable)
+    $default  reduce using rule 33 (assignment_statement)
 
 
 State 89
 
-   22 variables: variables COMMA . ID
+   35 num_exp: num_exp . AROP exp
+   49 arguments: num_exp .
 
-    ID  shift, and go to state 101
+    AROP  shift, and go to state 81
+
+    $default  reduce using rule 49 (arguments)
 
 
 State 90
 
-   35 assignment_statement: ID ASSIGN num_exp SEMICOLON .
+   46 function_call: ID $@4 LPAREN argument_s . RPAREN
 
-    $default  reduce using rule 35 (assignment_statement)
+    RPAREN  shift, and go to state 100
 
 
 State 91
 
-   37 num_exp: num_exp . AROP exp
-   51 arguments: num_exp .
+   48 argument_s: arguments .
+   50 arguments: arguments . COMMA num_exp
 
-    AROP  shift, and go to state 83
+    COMMA  shift, and go to state 101
 
-    $default  reduce using rule 51 (arguments)
+    $default  reduce using rule 48 (argument_s)
 
 
 State 92
 
-   48 function_call: ID $@6 LPAREN argument_s . RPAREN
+   54 rel_exp: num_exp RELOP . num_exp
 
-    RPAREN  shift, and go to state 102
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    num_exp        go to state 102
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 93
 
-   50 argument_s: arguments .
-   52 arguments: arguments . COMMA num_exp
+   53 if_part: IF LPAREN rel_exp RPAREN . statement
 
-    COMMA  shift, and go to state 103
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
 
-    $default  reduce using rule 50 (argument_s)
+    statement             go to state 103
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 94
 
-   56 rel_exp: num_exp RELOP . num_exp
+   39 exp: LPAREN num_exp RPAREN .
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
-
-    num_exp        go to state 104
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
+    $default  reduce using rule 39 (exp)
 
 
 State 95
 
-   55 if_part: IF LPAREN rel_exp RPAREN . statement
+   35 num_exp: num_exp AROP exp .
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    statement             go to state 105
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    $default  reduce using rule 35 (num_exp)
 
 
 State 96
 
-   41 exp: LPAREN num_exp RPAREN .
+   55 loop_statement: LOOP LPAREN ID COMMA . literal COMMA literal loop_opt RPAREN statement
 
-    $default  reduce using rule 41 (exp)
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+
+    literal  go to state 104
 
 
 State 97
 
-   37 num_exp: num_exp AROP exp .
+   61 jiro_exp: ID .
 
-    $default  reduce using rule 37 (num_exp)
+    $default  reduce using rule 61 (jiro_exp)
 
 
 State 98
 
-   57 loop_statement: LOOP LPAREN ID COMMA . literal COMMA literal loop_opt RPAREN statement
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp . RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-
-    literal  go to state 106
+    RABRACKET  shift, and go to state 105
 
 
 State 99
 
-   63 jiro_exp: ID .
+   20 variables: variables COMMA ID .
 
-    $default  reduce using rule 63 (jiro_exp)
+    $default  reduce using rule 20 (variables)
 
 
 State 100
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp . RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   46 function_call: ID $@4 LPAREN argument_s RPAREN .
 
-    RABRACKET  shift, and go to state 107
+    $default  reduce using rule 46 (function_call)
 
 
 State 101
 
-   22 variables: variables COMMA ID .
+   50 arguments: arguments COMMA . num_exp
 
-    $default  reduce using rule 22 (variables)
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    num_exp        go to state 106
+    exp            go to state 60
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 102
 
-   48 function_call: ID $@6 LPAREN argument_s RPAREN .
+   35 num_exp: num_exp . AROP exp
+   54 rel_exp: num_exp RELOP num_exp .
 
-    $default  reduce using rule 48 (function_call)
+    AROP  shift, and go to state 81
+
+    $default  reduce using rule 54 (rel_exp)
 
 
 State 103
 
-   52 arguments: arguments COMMA . num_exp
+   53 if_part: IF LPAREN rel_exp RPAREN statement .
 
-    ID           shift, and go to state 56
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
-    LPAREN       shift, and go to state 60
-
-    num_exp        go to state 108
-    exp            go to state 62
-    literal        go to state 63
-    function_call  go to state 64
+    $default  reduce using rule 53 (if_part)
 
 
 State 104
 
-   37 num_exp: num_exp . AROP exp
-   56 rel_exp: num_exp RELOP num_exp .
+   55 loop_statement: LOOP LPAREN ID COMMA literal . COMMA literal loop_opt RPAREN statement
 
-    AROP  shift, and go to state 83
-
-    $default  reduce using rule 56 (rel_exp)
+    COMMA  shift, and go to state 107
 
 
 State 105
 
-   55 if_part: IF LPAREN rel_exp RPAREN statement .
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET . LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    $default  reduce using rule 55 (if_part)
+    LBRACKET  shift, and go to state 108
 
 
 State 106
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal . COMMA literal loop_opt RPAREN statement
+   35 num_exp: num_exp . AROP exp
+   50 arguments: arguments COMMA num_exp .
 
-    COMMA  shift, and go to state 109
+    AROP  shift, and go to state 81
+
+    $default  reduce using rule 50 (arguments)
 
 
 State 107
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET . LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA . literal loop_opt RPAREN statement
 
-    LBRACKET  shift, and go to state 110
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+
+    literal  go to state 109
 
 
 State 108
 
-   37 num_exp: num_exp . AROP exp
-   52 arguments: arguments COMMA num_exp .
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET . tranga_body tranga_opt toreana_opt $@6 RBRACKET
 
-    AROP  shift, and go to state 83
+    TRANGA  shift, and go to state 110
 
-    $default  reduce using rule 52 (arguments)
+    tranga_body  go to state 111
 
 
 State 109
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA . literal loop_opt RPAREN statement
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal . loop_opt RPAREN statement
 
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
+    COMMA  shift, and go to state 112
 
-    literal  go to state 111
+    $default  reduce using rule 56 (loop_opt)
+
+    loop_opt  go to state 113
 
 
 State 110
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET . tranga_body tranga_opt toreana_opt $@8 RBRACKET
+   63 tranga_body: TRANGA . literal $@7 DO statement finish_opt
 
-    TRANGA  shift, and go to state 112
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
 
-    tranga_body  go to state 113
+    literal  go to state 114
 
 
 State 111
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal . loop_opt RPAREN statement
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body . tranga_opt toreana_opt $@6 RBRACKET
 
-    COMMA  shift, and go to state 114
+    TRANGA  shift, and go to state 110
 
-    $default  reduce using rule 58 (loop_opt)
+    $default  reduce using rule 66 (tranga_opt)
 
-    loop_opt  go to state 115
+    tranga_body  go to state 115
+    tranga_opt   go to state 116
 
 
 State 112
 
-   65 tranga_body: TRANGA . literal $@9 DO statement finish_opt
+   57 loop_opt: COMMA . literal
 
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
 
-    literal  go to state 116
+    literal  go to state 117
 
 
 State 113
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body . tranga_opt toreana_opt $@8 RBRACKET
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt . RPAREN statement
 
-    TRANGA  shift, and go to state 112
-
-    $default  reduce using rule 68 (tranga_opt)
-
-    tranga_body  go to state 117
-    tranga_opt   go to state 118
+    RPAREN  shift, and go to state 118
 
 
 State 114
 
-   59 loop_opt: COMMA . literal
+   63 tranga_body: TRANGA literal . $@7 DO statement finish_opt
 
-    INT_NUMBER   shift, and go to state 57
-    UINT_NUMBER  shift, and go to state 58
+    $default  reduce using rule 62 ($@7)
 
-    literal  go to state 119
+    $@7  go to state 119
 
 
 State 115
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt . RPAREN statement
+   67 tranga_opt: tranga_body . tranga_opt
 
-    RPAREN  shift, and go to state 120
+    TRANGA  shift, and go to state 110
+
+    $default  reduce using rule 66 (tranga_opt)
+
+    tranga_body  go to state 115
+    tranga_opt   go to state 120
 
 
 State 116
 
-   65 tranga_body: TRANGA literal . $@9 DO statement finish_opt
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt . toreana_opt $@6 RBRACKET
 
-    $default  reduce using rule 64 ($@9)
+    TOREANA  shift, and go to state 121
 
-    $@9  go to state 121
+    $default  reduce using rule 68 (toreana_opt)
+
+    toreana_opt  go to state 122
 
 
 State 117
 
-   69 tranga_opt: tranga_body . tranga_opt
+   57 loop_opt: COMMA literal .
 
-    TRANGA  shift, and go to state 112
-
-    $default  reduce using rule 68 (tranga_opt)
-
-    tranga_body  go to state 117
-    tranga_opt   go to state 122
+    $default  reduce using rule 57 (loop_opt)
 
 
 State 118
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt . toreana_opt $@8 RBRACKET
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN . statement
 
-    TOREANA  shift, and go to state 123
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
 
-    $default  reduce using rule 70 (toreana_opt)
-
-    toreana_opt  go to state 124
+    statement             go to state 123
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 119
 
-   59 loop_opt: COMMA literal .
+   63 tranga_body: TRANGA literal $@7 . DO statement finish_opt
 
-    $default  reduce using rule 59 (loop_opt)
+    DO  shift, and go to state 124
 
 
 State 120
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN . statement
+   67 tranga_opt: tranga_body tranga_opt .
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    statement             go to state 125
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    $default  reduce using rule 67 (tranga_opt)
 
 
 State 121
 
-   65 tranga_body: TRANGA literal $@9 . DO statement finish_opt
+   69 toreana_opt: TOREANA . DO statement
 
-    DO  shift, and go to state 126
+    DO  shift, and go to state 125
 
 
 State 122
 
-   69 tranga_opt: tranga_body tranga_opt .
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt . $@6 RBRACKET
 
-    $default  reduce using rule 69 (tranga_opt)
+    $default  reduce using rule 59 ($@6)
+
+    $@6  go to state 126
 
 
 State 123
 
-   71 toreana_opt: TOREANA . DO statement
+   55 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement .
 
-    DO  shift, and go to state 127
+    $default  reduce using rule 55 (loop_statement)
 
 
 State 124
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt . $@8 RBRACKET
+   63 tranga_body: TRANGA literal $@7 DO . statement finish_opt
 
-    $default  reduce using rule 61 ($@8)
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
 
-    $@8  go to state 128
+    statement             go to state 127
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 125
 
-   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement .
+   69 toreana_opt: TOREANA DO . statement
 
-    $default  reduce using rule 57 (loop_statement)
+    ID        shift, and go to state 32
+    IF        shift, and go to state 33
+    RETURN    shift, and go to state 34
+    LOOP      shift, and go to state 35
+    JIRO      shift, and go to state 36
+    LBRACKET  shift, and go to state 37
+
+    statement             go to state 128
+    compound_statement    go to state 42
+    assignment_statement  go to state 43
+    function_call         go to state 44
+    if_statement          go to state 45
+    if_part               go to state 46
+    loop_statement        go to state 47
+    jiro_statement        go to state 48
+    return_statement      go to state 49
 
 
 State 126
 
-   65 tranga_body: TRANGA literal $@9 DO . statement finish_opt
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 . RBRACKET
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
-
-    statement             go to state 129
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    RBRACKET  shift, and go to state 129
 
 
 State 127
 
-   71 toreana_opt: TOREANA DO . statement
+   63 tranga_body: TRANGA literal $@7 DO statement . finish_opt
 
-    ID        shift, and go to state 34
-    IF        shift, and go to state 35
-    RETURN    shift, and go to state 36
-    LOOP      shift, and go to state 37
-    JIRO      shift, and go to state 38
-    LBRACKET  shift, and go to state 39
+    FINISH  shift, and go to state 130
 
-    statement             go to state 130
-    compound_statement    go to state 44
-    assignment_statement  go to state 45
-    function_call         go to state 46
-    if_statement          go to state 47
-    if_part               go to state 48
-    loop_statement        go to state 49
-    jiro_statement        go to state 50
-    return_statement      go to state 51
+    $default  reduce using rule 64 (finish_opt)
+
+    finish_opt  go to state 131
 
 
 State 128
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 . RBRACKET
+   69 toreana_opt: TOREANA DO statement .
 
-    RBRACKET  shift, and go to state 131
+    $default  reduce using rule 69 (toreana_opt)
 
 
 State 129
 
-   65 tranga_body: TRANGA literal $@9 DO statement . finish_opt
+   60 jiro_statement: JIRO $@5 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@6 RBRACKET .
 
-    FINISH  shift, and go to state 132
-
-    $default  reduce using rule 66 (finish_opt)
-
-    finish_opt  go to state 133
+    $default  reduce using rule 60 (jiro_statement)
 
 
 State 130
 
-   71 toreana_opt: TOREANA DO statement .
+   65 finish_opt: FINISH . SEMICOLON
 
-    $default  reduce using rule 71 (toreana_opt)
+    SEMICOLON  shift, and go to state 132
 
 
 State 131
 
-   62 jiro_statement: JIRO $@7 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@8 RBRACKET .
+   63 tranga_body: TRANGA literal $@7 DO statement finish_opt .
 
-    $default  reduce using rule 62 (jiro_statement)
+    $default  reduce using rule 63 (tranga_body)
 
 
 State 132
 
-   67 finish_opt: FINISH . SEMICOLON
+   65 finish_opt: FINISH SEMICOLON .
 
-    SEMICOLON  shift, and go to state 134
-
-
-State 133
-
-   65 tranga_body: TRANGA literal $@9 DO statement finish_opt .
-
-    $default  reduce using rule 65 (tranga_body)
-
-
-State 134
-
-   67 finish_opt: FINISH SEMICOLON .
-
-    $default  reduce using rule 67 (finish_opt)
+    $default  reduce using rule 65 (finish_opt)
