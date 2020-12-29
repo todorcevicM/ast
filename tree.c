@@ -138,21 +138,16 @@ unsigned print_tree(TREE_NODE *tree) {
         if (print_tree(tree -> sibling)) {
             // printf("%s nema sibling\n", tree -> node_data -> name);
         }
-        else {
-            // printf("d\n\n");
-        }
+
         return 0;
     }
-    else {
-        return 1;
-    }
+    return 1;
 }
 
 void free_tree(TREE_NODE *tree) {
     TREE_NODE *temp = tree -> child;
 
     while (temp) {
-        // printf("a");
 
         if (temp -> node_data -> kind == FUN) {  
             free_tree(temp -> parameter);
@@ -188,7 +183,7 @@ void free_tree(TREE_NODE *tree) {
 //     TREE_NODE *fun4 = NULL;
 //     TREE_NODE *parameter2 = make_parameter(&fun1, "par2", 1);
 
-//     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter ->sibling -> node_data -> name);
+//     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter -> sibling -> node_data -> name);
 
 //     TREE_NODE *p3 = make_parameter(&fun1, "par3", 1);
 //     // printf("%s\n\n", fun1 -> parameter -> sibling -> sibling -> node_data -> name);

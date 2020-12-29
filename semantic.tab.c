@@ -86,9 +86,13 @@
   int var_num = 0;
   int fun_idx = -1;
   int fcall_idx = -1;
-  TREE_NODE *root;
 
-#line 92 "semantic.tab.c"
+
+    TREE_NODE *root;
+    TREE_NODE *current_function;
+
+
+#line 96 "semantic.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -172,12 +176,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "semantic.y"
+#line 27 "semantic.y"
 
   int i;
   char *s;
 
-#line 181 "semantic.tab.c"
+#line 185 "semantic.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -555,14 +559,14 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    74,    74,    85,    98,   102,   107,   116,   106,   124,
-     128,   123,   139,   142,   149,   150,   154,   161,   165,   166,
-     171,   170,   178,   182,   189,   190,   194,   195,   199,   200,
-     201,   202,   203,   204,   205,   209,   213,   220,   224,   231,
-     232,   236,   240,   247,   248,   249,   253,   257,   265,   264,
-     275,   276,   280,   284,   291,   292,   296,   300,   307,   314,
-     315,   320,   324,   319,   331,   339,   338,   346,   347,   351,
-     352,   356,   357,   361,   365
+       0,    78,    78,    89,   102,   106,   111,   126,   110,   134,
+     138,   133,   149,   152,   159,   160,   164,   174,   178,   179,
+     184,   183,   191,   195,   202,   203,   207,   208,   212,   213,
+     214,   215,   216,   217,   218,   222,   226,   233,   237,   244,
+     245,   249,   253,   260,   261,   262,   266,   270,   278,   277,
+     288,   289,   293,   297,   304,   305,   309,   313,   320,   327,
+     328,   333,   337,   332,   344,   352,   351,   359,   360,   364,
+     365,   369,   370,   374,   378
 };
 #endif
 
@@ -1445,7 +1449,7 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 75 "semantic.y"
+#line 79 "semantic.y"
         {   
             // printf("%s\t\t", root -> child -> node_data -> name);
             // ovde sad nece biti ovo lookup symbol 
@@ -1453,11 +1457,11 @@ yyreduce:
             // printf("aaa\n\n");
             print_tree(root);
         }
-#line 1457 "semantic.tab.c"
+#line 1461 "semantic.tab.c"
     break;
 
   case 3:
-#line 86 "semantic.y"
+#line 90 "semantic.y"
         {
             root = init_tree();
 			printf("%s\n\n", root -> node_data -> name);
@@ -1467,280 +1471,289 @@ yyreduce:
              
              */
         }
-#line 1471 "semantic.tab.c"
+#line 1475 "semantic.tab.c"
     break;
 
   case 4:
-#line 99 "semantic.y"
+#line 103 "semantic.y"
                 {
 			
 		}
-#line 1479 "semantic.tab.c"
+#line 1483 "semantic.tab.c"
     break;
 
   case 6:
-#line 107 "semantic.y"
-            {
+#line 111 "semantic.y"
+            {   
 				TREE_NODE *function = make_function(&root, (yyvsp[0].s), (yyvsp[-1].i));
-				// printf("%s\n\n", function -> node_data -> name);
+                if (!function) {
+                    err("Greska, funckija sa imenom %s vec postoji\n\n", (yyvsp[0].s));
+                }
+                else {
+                    current_function = function;
+                }
+                // printf("%s\n\n", function -> node_data -> name);
                 // printf("%s\t\t\n", function -> parent -> node_data -> name);
                 // print_tree(root);
 				// TODO: OVDE URADIM $ $ = make_function() ali moram izmeniti sta funkcija prima
 				// MSM DA BI TO BIO NACIN DA SE OVO URADDI
             }
-#line 1492 "semantic.tab.c"
+#line 1502 "semantic.tab.c"
     break;
 
   case 7:
-#line 116 "semantic.y"
+#line 126 "semantic.y"
             {
 
             }
-#line 1500 "semantic.tab.c"
+#line 1510 "semantic.tab.c"
     break;
 
   case 8:
-#line 120 "semantic.y"
+#line 130 "semantic.y"
             {
 
             }
-#line 1508 "semantic.tab.c"
+#line 1518 "semantic.tab.c"
     break;
 
   case 9:
-#line 124 "semantic.y"
+#line 134 "semantic.y"
             {
 
             }
-#line 1516 "semantic.tab.c"
+#line 1526 "semantic.tab.c"
     break;
 
   case 10:
-#line 128 "semantic.y"
+#line 138 "semantic.y"
             {
 
             }
-#line 1524 "semantic.tab.c"
+#line 1534 "semantic.tab.c"
     break;
 
   case 11:
-#line 132 "semantic.y"
+#line 142 "semantic.y"
             {
 
             }
-#line 1532 "semantic.tab.c"
+#line 1542 "semantic.tab.c"
     break;
 
   case 12:
-#line 139 "semantic.y"
+#line 149 "semantic.y"
             {
 
             }
-#line 1540 "semantic.tab.c"
+#line 1550 "semantic.tab.c"
     break;
 
   case 13:
-#line 143 "semantic.y"
+#line 153 "semantic.y"
             {
 
             }
-#line 1548 "semantic.tab.c"
+#line 1558 "semantic.tab.c"
     break;
 
   case 16:
-#line 155 "semantic.y"
+#line 165 "semantic.y"
             {
-
+                TREE_NODE *parameter = make_parameter(&current_function, (yyvsp[0].s), (yyvsp[-1].i));
+                if (!parameter) {
+                    err("Parametar %s vec postoji kao parametar koji funckija %s prima\n\n", (yyvsp[0].s), current_function -> node_data -> name);
+                }
             }
-#line 1556 "semantic.tab.c"
+#line 1569 "semantic.tab.c"
     break;
 
   case 20:
-#line 171 "semantic.y"
+#line 184 "semantic.y"
             {
 
             }
-#line 1564 "semantic.tab.c"
+#line 1577 "semantic.tab.c"
     break;
 
   case 22:
-#line 179 "semantic.y"
+#line 192 "semantic.y"
             {
 
             }
-#line 1572 "semantic.tab.c"
+#line 1585 "semantic.tab.c"
     break;
 
   case 23:
-#line 183 "semantic.y"
+#line 196 "semantic.y"
             {
 
             }
-#line 1580 "semantic.tab.c"
+#line 1593 "semantic.tab.c"
     break;
 
   case 36:
-#line 214 "semantic.y"
+#line 227 "semantic.y"
         {
 
         }
-#line 1588 "semantic.tab.c"
+#line 1601 "semantic.tab.c"
     break;
 
   case 37:
-#line 221 "semantic.y"
+#line 234 "semantic.y"
             {
 
             }
-#line 1596 "semantic.tab.c"
+#line 1609 "semantic.tab.c"
     break;
 
   case 38:
-#line 225 "semantic.y"
+#line 238 "semantic.y"
             {
 
             }
-#line 1604 "semantic.tab.c"
+#line 1617 "semantic.tab.c"
     break;
 
   case 40:
-#line 233 "semantic.y"
+#line 246 "semantic.y"
             {
 
             }
-#line 1612 "semantic.tab.c"
+#line 1625 "semantic.tab.c"
     break;
 
   case 41:
-#line 237 "semantic.y"
+#line 250 "semantic.y"
             {
 
             }
-#line 1620 "semantic.tab.c"
+#line 1633 "semantic.tab.c"
     break;
 
   case 42:
-#line 241 "semantic.y"
-            {
-
-            }
-#line 1628 "semantic.tab.c"
-    break;
-
-  case 46:
 #line 254 "semantic.y"
             {
 
             }
-#line 1636 "semantic.tab.c"
+#line 1641 "semantic.tab.c"
+    break;
+
+  case 46:
+#line 267 "semantic.y"
+            {
+
+            }
+#line 1649 "semantic.tab.c"
     break;
 
   case 47:
-#line 258 "semantic.y"
+#line 271 "semantic.y"
             {
 
             }
-#line 1644 "semantic.tab.c"
+#line 1657 "semantic.tab.c"
     break;
 
   case 48:
-#line 265 "semantic.y"
+#line 278 "semantic.y"
             {
 
             }
-#line 1652 "semantic.tab.c"
+#line 1665 "semantic.tab.c"
     break;
 
   case 49:
-#line 269 "semantic.y"
+#line 282 "semantic.y"
             {
 
             }
-#line 1660 "semantic.tab.c"
+#line 1673 "semantic.tab.c"
     break;
 
   case 52:
-#line 281 "semantic.y"
+#line 294 "semantic.y"
             {
 
             }
-#line 1668 "semantic.tab.c"
+#line 1681 "semantic.tab.c"
     break;
 
   case 53:
-#line 285 "semantic.y"
+#line 298 "semantic.y"
             {
 
             }
-#line 1676 "semantic.tab.c"
+#line 1689 "semantic.tab.c"
     break;
 
   case 57:
-#line 301 "semantic.y"
+#line 314 "semantic.y"
             {
 
             }
-#line 1684 "semantic.tab.c"
+#line 1697 "semantic.tab.c"
     break;
 
   case 58:
-#line 308 "semantic.y"
+#line 321 "semantic.y"
             {
 
             }
-#line 1692 "semantic.tab.c"
+#line 1705 "semantic.tab.c"
     break;
 
   case 61:
-#line 320 "semantic.y"
+#line 333 "semantic.y"
             {
 
             }
-#line 1700 "semantic.tab.c"
+#line 1713 "semantic.tab.c"
     break;
 
   case 62:
-#line 324 "semantic.y"
+#line 337 "semantic.y"
             {
 
             }
-#line 1708 "semantic.tab.c"
+#line 1721 "semantic.tab.c"
     break;
 
   case 64:
-#line 332 "semantic.y"
+#line 345 "semantic.y"
             {
 
             }
-#line 1716 "semantic.tab.c"
+#line 1729 "semantic.tab.c"
     break;
 
   case 65:
-#line 339 "semantic.y"
+#line 352 "semantic.y"
             {
 
             }
-#line 1724 "semantic.tab.c"
+#line 1737 "semantic.tab.c"
     break;
 
   case 73:
-#line 362 "semantic.y"
+#line 375 "semantic.y"
             {
 
             }
-#line 1732 "semantic.tab.c"
+#line 1745 "semantic.tab.c"
     break;
 
   case 74:
-#line 366 "semantic.y"
+#line 379 "semantic.y"
             {
 
             }
-#line 1740 "semantic.tab.c"
+#line 1753 "semantic.tab.c"
     break;
 
 
-#line 1744 "semantic.tab.c"
+#line 1757 "semantic.tab.c"
 
       default: break;
     }
@@ -1972,7 +1985,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 371 "semantic.y"
+#line 384 "semantic.y"
 
 
 int yyerror(char *s) {

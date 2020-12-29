@@ -17,7 +17,11 @@
   int var_num = 0;
   int fun_idx = -1;
   int fcall_idx = -1;
-  TREE_NODE *root;
+
+
+    TREE_NODE *root;
+    TREE_NODE *current_function;
+
 %}
 
 %union {
@@ -104,9 +108,15 @@ function_list
 
 function 
     :   TYPE ID 
-            {
+            {   
 				TREE_NODE *function = make_function(&root, $2, $1);
-				// printf("%s\n\n", function -> node_data -> name);
+                if (!function) {
+                    err("Greska, funckija sa imenom %s vec postoji\n\n", $2);
+                }
+                else {
+                    current_function = function;
+                }
+                // printf("%s\n\n", function -> node_data -> name);
                 // printf("%s\t\t\n", function -> parent -> node_data -> name);
                 // print_tree(root);
 				// TODO: OVDE URADIM $ $ = make_function() ali moram izmeniti sta funkcija prima
@@ -153,7 +163,10 @@ parameters
 parameter 
     :   TYPE ID
             {
-
+                TREE_NODE *parameter = make_parameter(&current_function, $2, $1);
+                if (!parameter) {
+                    err("Parametar %s vec postoji kao parametar koji funckija %s prima\n\n", $2, current_function -> node_data -> name);
+                }
             }
     ;
 
