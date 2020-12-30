@@ -229,8 +229,6 @@ exp
     |   ID post_op
             {
                 update = update_node(&current_function, $1, post_operator); 
-                // printf("%s\t%d\n\n", current_function -> node_data -> name, atoi(update -> node_data -> name));
-                // $$ = atoi(update -> node_data -> name);
             }
     |   function_call
             {
