@@ -200,19 +200,23 @@ unsigned print_tree(TREE_NODE *tree) {
             printf("-");
         }
         printf("\n");
-        indent++;
 
         if (tree -> node_data -> kind == FUN) {
+            indent++;
             if (print_tree(tree -> parameter)) {
                 // printf("Funkcija %s nema parametre\n", tree -> node_data -> name);
+                indent--;
             }
         }
+        indent++;
+        
         if (print_tree(tree -> child)) {
             // printf("%s nema child\n", tree -> node_data -> name);
             indent--;
         }
         if (print_tree(tree -> sibling)) {
             // printf("%s nema sibling\n", tree -> node_data -> name);
+            indent--;
         }
 
         return 0;

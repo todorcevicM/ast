@@ -122,7 +122,10 @@ param_list
 
 parameters
     :   parameter
-    |   parameters COMMA parameter
+    |   parameters COMMA parameter 
+        {
+            // TODO: ovo pravilo je fucked int a, int b; moze sa ovim pravilom
+        }
     ;
 
 parameter 
@@ -157,14 +160,17 @@ variables
             {
                 TREE_NODE *variable = make_variable(&current_function, $1, variable_type);
                 // TODO: ako uradim ovako onda nemam mogucnost za globalne za sad
+                // TODO: jedino sto vraca NULL u dva razlicita slucaja
                 if (!variable) {
-                    err("Greska, \n\n");
+                    err("Greska, funckija %s vec ima deklarisan parametar/ variable sa imenom %s\n\n", current_function -> node_data -> name, $1);
                 }
             }
     |   variables COMMA ID
             {
                 TREE_NODE *variable = make_variable(&current_function, $3, variable_type);
-
+                if (!variable) {
+                    err("Greska, funckija %s vec ima deklarisan parametar/ variable sa imenom %s\n\n", current_function -> node_data -> name, $3);
+                }
             }
     ;
 
