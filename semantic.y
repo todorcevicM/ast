@@ -77,26 +77,13 @@
 
 
 program
-    : init_program function_list
+    : function_list
         {   
             // printf("%s\t\t", root -> child -> node_data -> name);
             // ovde sad nece biti ovo lookup symbol 
             // ici ce provera za tree, i da li u njemu postoji 'main'
             // printf("aaa\n\n");
             print_tree(root);
-        }
-    ;
-
-init_program
-    : INIT SEMICOLON
-        {
-            root = init_tree();
-			printf("%s\n\n", root -> node_data -> name);
-            /* 
-                postoji zato sto moram zapoceti stablo, a pravilo program bi ga kreiralo na samom kraju dok ga ovo pravilo kreira na samom pocetku
-                e sad, ovo resava problem za funkije, drugi problem je sa onim tokenima koje same funkcije sadrze?
-             
-             */
         }
     ;
 

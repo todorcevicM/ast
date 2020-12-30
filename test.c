@@ -1,4 +1,4 @@
-init;
+
 
 int f() {
     return 1;    

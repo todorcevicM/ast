@@ -34,8 +34,8 @@ TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
     TREE_NODE *function_root = NULL;
     // ako slucajno nije kreirao program
     if (!(*tree)) {
-        printf("Greska, program nije zapocet\n\n");
-        return NULL;
+        (*tree) = init_tree();
+        return make_function(tree, name, type);
     }
     // poseban slucaj za kad nema dete
     else if (!((*tree) -> child)) {
@@ -135,7 +135,6 @@ unsigned print_tree(TREE_NODE *tree) {
             printf("-");
         }
         printf("\n");
-        // printf("---------------------------------------------------------\n");
         for (i = 0; i < indent; i++) {
             printf("\t");
         }
@@ -148,7 +147,6 @@ unsigned print_tree(TREE_NODE *tree) {
             printf("-");
         }
         printf("\n");
-        // printf("---------------------------------------------------------\n");
         indent++;
 
         if (tree -> node_data -> kind == FUN) {
