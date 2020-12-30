@@ -202,11 +202,6 @@ TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
 
         return literal;
     }
-    
-
-
-
-
 }
 
 unsigned print_tree(TREE_NODE *tree) {
