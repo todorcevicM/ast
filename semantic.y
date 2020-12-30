@@ -31,8 +31,6 @@
   char *s;
 }
 
-%token INIT
-
 %token <i> TYPE
 %token <i> V_TYPE 
 
@@ -98,8 +96,6 @@ function
                 else {
                     current_function = function;
                 }
-				// TODO: OVDE URADIM $ $ = make_function() ali moram izmeniti sta funkcija prima
-				// MSM DA BI TO BIO NACIN DA SE OVO URADDI
             }
         LPAREN param_list RPAREN body
     |   V_TYPE ID
@@ -123,9 +119,6 @@ param_list
 parameters
     :   parameter
     |   parameters COMMA parameter 
-        {
-            // TODO: ovo pravilo je fucked int a, int b; moze sa ovim pravilom
-        }
     ;
 
 parameter 
@@ -160,7 +153,6 @@ variables
             {
                 TREE_NODE *variable = make_variable(&current_function, $1, variable_type);
                 // TODO: ako uradim ovako onda nemam mogucnost za globalne za sad
-                // TODO: jedino sto vraca NULL u dva razlicita slucaja
                 if (!variable) {
                     err("Greska, funckija %s vec ima deklarisan parametar/ variable sa imenom %s\n\n", current_function -> node_data -> name, $1);
                 }
@@ -241,11 +233,11 @@ post_op
 literal
     :   INT_NUMBER
             {
-
+                TREE_NODE *literal = make_literal(&current_function, $1, 1);
             }
     |   UINT_NUMBER
             {
-
+                TREE_NODE *literal = make_literal(&current_function, $1, 2);
             }
     ;
 

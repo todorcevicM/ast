@@ -9,10 +9,18 @@
 
 #define NODE_NAME_BUFFER 16
 
+typedef struct val {
+    // char name[NODE_NAME_BUFFER];
+    // MA NE PADA MI NAPAMET DA MENJAM SAD DA MI OVO BUDE OVAKO
+    int i;
+    unsigned u;
+} VALUE;
+
 typedef struct node_data {
     char name[NODE_NAME_BUFFER];
     unsigned kind;
     unsigned type;
+    VALUE *value;
 } NODE_DATA;
 
 typedef struct tree_node {
@@ -33,6 +41,7 @@ TREE_NODE *init_tree();
 TREE_NODE *make_function(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_parameter(TREE_NODE **function_node, char *name, unsigned type);
 TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type);
+TREE_NODE *make_literal(TREE_NODE **tree, char  *name, unsigned type);
 
 unsigned print_tree(TREE_NODE *tree);
 void free_tree(TREE_NODE *tree);

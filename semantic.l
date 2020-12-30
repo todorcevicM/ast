@@ -10,8 +10,6 @@
 
 [ \t\n]+             { /* skip */ }
 
-"init"               { return INIT; }
-
 "int"                { yylval.i = INT;  return TYPE; }
 "unsigned"           { yylval.i = UINT; return TYPE; }
 "void"               { yylval.i = VOID; return V_TYPE; }

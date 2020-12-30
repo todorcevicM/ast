@@ -49,35 +49,34 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INIT = 258,
-    TYPE = 259,
-    V_TYPE = 260,
-    ID = 261,
-    INT_NUMBER = 262,
-    UINT_NUMBER = 263,
-    IF = 264,
-    ELSE = 265,
-    RETURN = 266,
-    LOOP = 267,
-    JIRO = 268,
-    TRANGA = 269,
-    TOREANA = 270,
-    FINISH = 271,
-    LABRACKET = 272,
-    RABRACKET = 273,
-    DO = 274,
-    SEMICOLON = 275,
-    COMMA = 276,
-    LPAREN = 277,
-    RPAREN = 278,
-    LBRACKET = 279,
-    RBRACKET = 280,
-    ASSIGN = 281,
-    AROP = 282,
-    PINC = 283,
-    PDEC = 284,
-    RELOP = 285,
-    ONLY_IF = 286
+    TYPE = 258,
+    V_TYPE = 259,
+    ID = 260,
+    INT_NUMBER = 261,
+    UINT_NUMBER = 262,
+    IF = 263,
+    ELSE = 264,
+    RETURN = 265,
+    LOOP = 266,
+    JIRO = 267,
+    TRANGA = 268,
+    TOREANA = 269,
+    FINISH = 270,
+    LABRACKET = 271,
+    RABRACKET = 272,
+    DO = 273,
+    SEMICOLON = 274,
+    COMMA = 275,
+    LPAREN = 276,
+    RPAREN = 277,
+    LBRACKET = 278,
+    RBRACKET = 279,
+    ASSIGN = 280,
+    AROP = 281,
+    PINC = 282,
+    PDEC = 283,
+    RELOP = 284,
+    ONLY_IF = 285
   };
 #endif
 
@@ -90,7 +89,7 @@ union YYSTYPE
   int i;
   char *s;
 
-#line 94 "semantic.tab.h"
+#line 93 "semantic.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

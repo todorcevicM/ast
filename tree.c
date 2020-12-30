@@ -10,6 +10,18 @@ TREE_NODE *create_node(char *name, unsigned kind, unsigned type, TREE_NODE *pare
     strcpy(node -> node_data -> name, name);
     node -> node_data -> kind = kind;
     node -> node_data -> type = type;
+
+    if (kind == LIT) {
+        if (type == INT) {
+            node -> node_data -> value = (VALUE *) malloc(sizeof(int));
+            node -> node_data -> value -> i = atoi(name);
+        }
+        else if (type == UINT) {
+            node -> node_data -> value = (VALUE *) malloc(sizeof(unsigned));
+            node -> node_data -> value -> u = atoi(name);
+        }
+    }
+
     node -> parent = parent;
     node -> sibling = sibling;
     node -> child = NULL;
@@ -168,6 +180,35 @@ TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type) {
     }
 }
 
+TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
+    TREE_NODE *temp = (*tree) -> child;
+    TREE_NODE *temp1 = NULL;
+    // nema child
+    if (!temp) {
+        TREE_NODE *literal = create_node(name, LIT, type, *tree, NULL);
+        (*tree) -> child = literal;
+
+        return literal;
+    }
+    // ima child
+    else {
+        while (temp) {
+            temp1 = temp;
+            temp = temp -> sibling;
+        }
+        // dosao je do kraja, treba da kreira cvor
+        TREE_NODE *literal = create_node(name, LIT, type, *tree, NULL);
+        temp1 -> sibling = literal;
+
+        return literal;
+    }
+    
+
+
+
+
+}
+
 unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {
@@ -209,7 +250,7 @@ unsigned print_tree(TREE_NODE *tree) {
             }
         }
         indent++;
-        
+
         if (print_tree(tree -> child)) {
             // printf("%s nema child\n", tree -> node_data -> name);
             indent--;
