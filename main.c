@@ -25,7 +25,7 @@ int main() {
 
     // printf("%s\n\n", fun1 -> child -> node_data -> name);
 
-    TREE_NODE *l6 = update_node(&fun1, "1", 2);
+    update_node(&fun1, "1", 2);
 
     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter ->sibling -> node_data -> name);
     // printf("%s\n\n", fun1 -> child -> node_data -> name);
