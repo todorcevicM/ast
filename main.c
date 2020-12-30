@@ -19,11 +19,13 @@ int main() {
     TREE_NODE *l2 = make_literal(&fun1, "lit2", 1);
     TREE_NODE *l3 = make_literal(&fun1, "lit3", 1);
     TREE_NODE *l4 = make_literal(&fun1, "lit4", 1);
-    TREE_NODE *l5 = make_literal(&fun1, "lit5", 1);
+    TREE_NODE *l5 = make_literal(&fun1, "1", 1);
 
     printf("b\n\n");
 
     // printf("%s\n\n", fun1 -> child -> node_data -> name);
+
+    TREE_NODE *l6 = update_node(&fun1, "1", 2);
 
     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter ->sibling -> node_data -> name);
     // printf("%s\n\n", fun1 -> child -> node_data -> name);

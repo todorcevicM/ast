@@ -231,14 +231,22 @@ TREE_NODE *find_node(TREE_NODE **tree, char *name) {
     }
 }
 
-TREE_NODE *update_node(TREE_NODE **root, TREE_NODE *node, unsigned update_type) {
-    TREE_NODE *temp = find_node(&root, node -> node_data -> name);
+TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
+    TREE_NODE *temp = find_node(root, name);
     int i;
+    char *s;
 
     if (update_type == 1) {
         i = atoi(temp -> node_data -> name);
         i++;
-        strcpy(temp -> node_data -> name, itoa(i));
+        sprintf(s, "%d", i);
+        strcpy(temp -> node_data -> name, s);
+    }
+    else if (update_type == 2) {
+        i = atoi(temp -> node_data -> name);
+        i--;
+        sprintf(s, "%d", i);
+        strcpy(temp -> node_data -> name, s);
     }
 
     return temp;

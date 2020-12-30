@@ -43,7 +43,7 @@ TREE_NODE *make_parameter(TREE_NODE **function_node, char *name, unsigned type);
 TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_literal(TREE_NODE **tree, char  *name, unsigned type);
 TREE_NODE *find_node(TREE_NODE **root, char *name);
-TREE_NODE *update_node(TREE_NODE **root, TREE_NODE *node, unsigned update_type);
+TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type);
 
 unsigned print_tree(TREE_NODE *tree);
 void free_tree(TREE_NODE *tree);

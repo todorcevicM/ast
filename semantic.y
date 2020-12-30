@@ -213,7 +213,7 @@ exp
     :   literal 
     |   ID post_op
             {
-                // update_node(find_node(&root, current_function, $1), post_operator);
+                // update_node(&current_function, $1, post_operator);
             }
     |   function_call
             {
