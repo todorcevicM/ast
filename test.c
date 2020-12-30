@@ -1,5 +1,6 @@
 
 int f() {
+    
     return 1;    
 }
 
@@ -14,6 +15,7 @@ int f1(int a, int b) {
 
     return a;
 }
+
 void f2(int a, unsigned b) {
     // unsigned b;
 

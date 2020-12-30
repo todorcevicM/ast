@@ -23,9 +23,14 @@ int main() {
 
     printf("b\n\n");
 
+    TREE_NODE *node = find_f(&tree, "fun4");
+    printf("%s\n\n", node -> node_data -> name);
+
     // printf("%s\n\n", fun1 -> child -> node_data -> name);
 
-    update_node(&fun1, "1", 2);
+    // update_node(&fun1, "1", 2);
+
+
 
     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter ->sibling -> node_data -> name);
     // printf("%s\n\n", fun1 -> child -> node_data -> name);

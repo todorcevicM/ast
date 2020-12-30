@@ -194,18 +194,19 @@ compound_statement
 assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {
-
+            // TODO: 
+            TREE_NODE *to_assign = find_node(&current_function, $1);
         }
     ;
 
 num_exp
     :   exp 
             {
-
+                // TODO: 
             }
     |   num_exp AROP exp 
             {
-
+                // TODO: 
             }
     ;
 
@@ -217,11 +218,11 @@ exp
             }
     |   function_call
             {
-
+                // TODO: 
             }
     |   LPAREN num_exp RPAREN
             {
-
+                // TODO: 
             }
     ;
 
@@ -251,11 +252,15 @@ literal
 function_call
     :   ID
             {
-
+                // TODO: 
+                TREE_NODE *function = find_f(&root, $1);
+                if (!function) {
+                    err("Greska, funkcija %s nije pronadjena\n\n", $1);
+                }
             }
         LPAREN argument_s RPAREN
             {
-
+                // TODO: 
             }
     ;
 
@@ -267,11 +272,11 @@ argument_s
 arguments 
     :   num_exp
             {
-
+                // TODO: 
             }
     |   arguments COMMA num_exp 
             {
-
+                // TODO: 
             }
     ;
 
@@ -287,14 +292,14 @@ if_part
 rel_exp
     :   num_exp RELOP num_exp
             {
-
+                // TODO: 
             }
     ;
 
 loop_statement
     :   LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
             {
-
+                // TODO: 
             }
     ;
 
@@ -306,10 +311,11 @@ loop_opt
 jiro_statement
     :   JIRO
             {
-
+                // TODO: 
             }
         LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt 
             {
+                // TODO: 
 
             }
         RBRACKET
@@ -318,6 +324,7 @@ jiro_statement
 jiro_exp
     :   ID
             {
+                // TODO: 
 
             }
     ;
@@ -325,6 +332,7 @@ jiro_exp
 tranga_body
     :   TRANGA literal
             {
+                // TODO: 
 
             }
         DO statement finish_opt
@@ -348,7 +356,7 @@ toreana_opt
 return_statement
     :   RETURN num_exp SEMICOLON
             {
-                // if (current_function -> node_data -> type == )
+                // TODO: 
             }
     |   RETURN SEMICOLON
             {

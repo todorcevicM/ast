@@ -26,15 +26,6 @@ TREE_NODE *create_node(char *name, unsigned kind, unsigned type, TREE_NODE *pare
     node -> sibling = sibling;
     node -> child = NULL;
 
-    // if (kind == FUN) {
-    //     printf("%s\n\n", parent -> node_data -> name);
-    // }
-    // if (kind == PAR || kind == VAR || kind == LIT) {
-    //     // printf("%s\n\n", parent);
-
-    //     printf("This parameter is for this function: %s\n\n", node -> parent -> node_data -> name);
-    // }
-
     return node;
 }
 
@@ -204,30 +195,51 @@ TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
     }
 }
 
-TREE_NODE *find_node(TREE_NODE **tree, char *name) {
+TREE_NODE *find_node(TREE_NODE **root, char *name) {
     TREE_NODE *temp = NULL;
 
-    if (!strcmp((*tree) -> node_data -> name, name)) {
-        printf("%s\n\n", (*tree) -> parent -> node_data -> name);
-        return *tree;
+    if (!strcmp((*root) -> node_data -> name, name)) {
+        printf("%s\n\n", (*root) -> parent -> node_data -> name);
+        return *root;
     }
-    if ((*tree) -> node_data -> kind == FUN) {
-        temp = find_node(&((*tree) -> parameter), name);
+    if ((*root) -> node_data -> kind == FUN) {
+        temp = find_node(&((*root) -> parameter), name);
         if (temp) {
             return temp;
         }
     }    
-    if ((*tree) -> child) {
-        temp = find_node(&((*tree) -> child), name);
+    if ((*root) -> child) {
+        temp = find_node(&((*root) -> child), name);
         if (temp) {
             return temp;
         }
     }
-    if ((*tree) -> sibling) {
-        temp = find_node(&((*tree) -> sibling), name);
+    if ((*root) -> sibling) {
+        temp = find_node(&((*root) -> sibling), name);
         if (temp) {
             return temp;
         }
+    }
+}
+
+TREE_NODE *find_function(TREE_NODE **root, char *name) {
+    TREE_NODE *temp = NULL;
+    
+    if (!strcmp((*root) -> node_data -> name, name)) {
+        return *root;
+    }
+    if ((*root) -> sibling) {
+        temp = find_function(&((*root) -> sibling), name);
+        if (temp) {
+            return temp;
+        }
+    }
+    return NULL;
+}
+
+TREE_NODE *find_f(TREE_NODE **root, char *name) {
+    if ((*root) -> child) {
+        return find_function(&((*root) -> child), name);
     }
 }
 
@@ -329,32 +341,3 @@ void free_tree(TREE_NODE *tree) {
 
     free(tree);
 }
-
-
-// int main() {
-
-//     TREE_NODE *tree = init_tree();
-//     print_tree(tree);
-
-//     TREE_NODE *fun1 = make_function(&tree, "fun1", 1);
-
-//     TREE_NODE *fun2 = make_function(&tree, "fun2", 1);
-
-//     TREE_NODE *fun3 = make_function(&tree, "fun3", 1);
-
-//     TREE_NODE *parameter1 = make_parameter(&fun1, "par1", 1);
-
-//     TREE_NODE *fun4 = NULL;
-//     TREE_NODE *parameter2 = make_parameter(&fun1, "par2", 1);
-
-//     // printf("%s\n%s\n\n", fun1 -> parameter -> node_data -> name, fun1 -> parameter -> sibling -> node_data -> name);
-
-//     TREE_NODE *p3 = make_parameter(&fun1, "par3", 1);
-//     // printf("%s\n\n", fun1 -> parameter -> sibling -> sibling -> node_data -> name);
-
-
-//     free_tree(tree);
-
-//     return 0;
-
-// }
