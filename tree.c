@@ -204,6 +204,46 @@ TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
     }
 }
 
+TREE_NODE *find_node(TREE_NODE **tree, char *name) {
+    TREE_NODE *temp = NULL;
+
+    if (!strcmp((*tree) -> node_data -> name, name)) {
+        printf("%s\n\n", (*tree) -> parent -> node_data -> name);
+        return *tree;
+    }
+    if ((*tree) -> node_data -> kind == FUN) {
+        temp = find_node(&((*tree) -> parameter), name);
+        if (temp) {
+            return temp;
+        }
+    }    
+    if ((*tree) -> child) {
+        temp = find_node(&((*tree) -> child), name);
+        if (temp) {
+            return temp;
+        }
+    }
+    if ((*tree) -> sibling) {
+        temp = find_node(&((*tree) -> sibling), name);
+        if (temp) {
+            return temp;
+        }
+    }
+}
+
+TREE_NODE *update_node(TREE_NODE **root, TREE_NODE *node, unsigned update_type) {
+    TREE_NODE *temp = find_node(&root, node -> node_data -> name);
+    int i;
+
+    if (update_type == 1) {
+        i = atoi(temp -> node_data -> name);
+        i++;
+        strcpy(temp -> node_data -> name, itoa(i));
+    }
+
+    return temp;
+}
+
 unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {

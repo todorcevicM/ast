@@ -23,6 +23,7 @@
     TREE_NODE *current_function;
 
     unsigned variable_type = NO_TYPE;
+    unsigned post_operator = 0;
 
 %}
 
@@ -212,7 +213,7 @@ exp
     :   literal 
     |   ID post_op
             {
-
+                // update_node(find_node(&root, current_function, $1), post_operator);
             }
     |   function_call
             {
@@ -227,7 +228,13 @@ exp
 post_op
     :   /*  */
     |   PINC
+            {
+                post_operator = 1;
+            }
     |   PDEC
+            {
+                post_operator = 2;
+            }
     ;
 
 literal

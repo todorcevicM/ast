@@ -1,0 +1,6 @@
+tree.c: In function ‘find_node’:
+tree.c:223:14: warning: format ‘%s’ expects argument of type ‘char *’, but argument 2 has type ‘struct tree_node *’ [-Wformat=]
+  223 |     printf("%s\n\n", (*tree) -> child);
+      |             ~^       ~~~~~~~~~~~~~~~~
+      |              |               |
+      |              char *          struct tree_node *
