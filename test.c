@@ -17,7 +17,7 @@ int f1(int a, int b) {
     c = 4;
     d = 4;
 
-    return a;
+    return 0;
 }
 
 // void f2(int a, unsigned b) {

@@ -236,6 +236,7 @@ TREE_NODE *find_function(TREE_NODE **root, char *name) {
     }
     return NULL;
 }
+
 TREE_NODE *find_f(TREE_NODE **root, char *name) {
     if ((*root) -> child) {
         return find_function(&((*root) -> child), name);
@@ -263,25 +264,7 @@ TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
     return temp;
 }
 
-
-// TREE_NODE *set_value(TREE_NODE **tree, char *name, int value) {
-
-//     TREE_NODE *temp = find_node(tree, name);
-
-//     // printf("%s\n\n", temp -> node_data -> name);
-
-//     temp -> node_data -> value = malloc(sizeof(VALUE));
-//     temp -> node_data -> value -> i = value;
-
-//     // printf("%d\n\n", temp -> node_data -> value -> i);
-
-//     // temp -> child = 
-
-
-// }
-
 TREE_NODE *set_value(TREE_NODE **tree, int value) {
-    // TREE_NODE *temp = find_node(tree -> parent
 
     (*tree) -> node_data -> value = malloc(sizeof(VALUE));
     (*tree) -> node_data -> value -> i = value;
@@ -291,9 +274,6 @@ TREE_NODE *set_value(TREE_NODE **tree, int value) {
     TREE_NODE *literal = find_node(&((*tree) -> parent), s);
 
     return update_literal_parent(tree, &literal);
-
-    // (*tree) -> child = 
-
 }
 
 TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal) {
@@ -317,6 +297,25 @@ unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {
         unsigned size = 0;
+        char *type_s;
+        char *kind_s;
+        // char *s;
+        // s = "";
+        // printf("%s", s);
+        // sprintf(type_s, "%d", tree -> node_data -> type);
+        // sprintf(kind_s, "%d", tree -> node_data -> kind);
+        // printf("%s%s", type_s, kind_s);
+
+        // strcat(s, "|Node name: ");
+        // strcat(s, tree -> node_data -> name);
+        // strcat(s, "; Node type: ");
+        // strcat(s, type);
+        // strcat(s, "; Node kind: ");
+        // strcat(s, kind);
+        // strcat(s, "|\n");
+
+        // int size_s = strlen(s);
+
         size += 36;
         size += strlen(tree -> node_data -> name);
         size += 5;
@@ -342,6 +341,7 @@ unsigned print_tree(TREE_NODE *tree) {
         for (i = 0; i < indent; i++) {
             printf("\t");
         }
+        // printf("%s", s);
         printf("|Node name: %s; Node type: %u; Node kind: %u|\n", 
             tree -> node_data -> name, tree -> node_data -> type, tree -> node_data -> kind);
         for (i = 0; i < indent; i++) {

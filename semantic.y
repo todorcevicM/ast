@@ -208,23 +208,14 @@ compound_statement
 assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {
-            // TODO: 
             current_variable = find_node(&current_function, $1);
-            printf("%s\t%d\n\n", current_variable -> node_data -> name, $3);
-
             set_value(&current_variable, $3);
-
-            printf("%d", find_node(&current_function, $1) -> node_data -> value -> i);
-            printf("%s\n\n", current_literal -> node_data -> name);
-
         }
     ;
 
 num_exp
     :   exp 
             {
-                // TODO: 
-                // printf("%s\t%d\n\n", current_function -> node_data -> name, $1);
                 $$ = $1;
             }
     |   num_exp AROP exp 
