@@ -15,16 +15,22 @@ int main() {
     TREE_NODE *p3 = make_parameter(&fun1, "par3", 1);
     TREE_NODE *f4 = make_function(&tree, "fun4", 1);
     TREE_NODE *p4 = make_parameter(&f4, "par3", 1);
-    TREE_NODE *l1 = make_literal(&fun1, "lit1", 1);
-    TREE_NODE *l2 = make_literal(&fun1, "lit2", 1);
-    TREE_NODE *l3 = make_literal(&fun1, "lit3", 1);
-    TREE_NODE *l4 = make_literal(&fun1, "lit4", 1);
-    TREE_NODE *l5 = make_literal(&fun1, "1", 1);
+    // TREE_NODE *l1 = make_literal(&fun1, "lit1", 1);
+    // TREE_NODE *l2 = make_literal(&fun1, "lit2", 1);
+    // TREE_NODE *l3 = make_literal(&fun1, "lit3", 1);
+    // TREE_NODE *l4 = make_literal(&fun1, "lit4", 1);
+    // TREE_NODE *l5 = make_literal(&fun1, "1", 1);
+    TREE_NODE *var1 = make_variable(&fun1, "var1", 1);
 
     printf("b\n\n");
 
     TREE_NODE *node = find_f(&tree, "fun4");
-    printf("%s\n\n", node -> node_data -> name);
+    // printf("%s\n\n", node -> node_data -> name);
+
+    printf("%s\n\n", fun1 -> child -> node_data -> name);
+
+    TREE_NODE *set = set_value(&fun1, "var1", 1);
+
 
     // printf("%s\n\n", fun1 -> child -> node_data -> name);
 

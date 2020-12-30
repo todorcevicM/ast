@@ -1,8 +1,8 @@
 
-int f() {
-    
-    return 1;    
-}
+// int f() {
+
+//     return 1;    
+// }
 
 int f1(int a, int b) {
 
@@ -12,18 +12,22 @@ int f1(int a, int b) {
     // int c;
     // int b1, b1;
     // int b1, b2;
+    int c;
+    int d;
+    c = 4;
+    d = 4;
 
     return a;
 }
 
-void f2(int a, unsigned b) {
-    // unsigned b;
+// void f2(int a, unsigned b) {
+//     // unsigned b;
 
-    return 0;
-}
-unsigned f3(unsigned a, unsigned b) {
-    return 1u;
-}
+//     return 0;
+// }
+// unsigned f3(unsigned a, unsigned b) {
+//     return 1u;
+// }
 
 int main() {
     // int a = 1;

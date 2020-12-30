@@ -199,7 +199,7 @@ TREE_NODE *find_node(TREE_NODE **root, char *name) {
     TREE_NODE *temp = NULL;
 
     if (!strcmp((*root) -> node_data -> name, name)) {
-        printf("%s\n\n", (*root) -> parent -> node_data -> name);
+        // printf("%s\n\n", (*root) -> parent -> node_data -> name);
         return *root;
     }
     if ((*root) -> node_data -> kind == FUN) {
@@ -236,7 +236,6 @@ TREE_NODE *find_function(TREE_NODE **root, char *name) {
     }
     return NULL;
 }
-
 TREE_NODE *find_f(TREE_NODE **root, char *name) {
     if ((*root) -> child) {
         return find_function(&((*root) -> child), name);
@@ -264,6 +263,56 @@ TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
     return temp;
 }
 
+
+// TREE_NODE *set_value(TREE_NODE **tree, char *name, int value) {
+
+//     TREE_NODE *temp = find_node(tree, name);
+
+//     // printf("%s\n\n", temp -> node_data -> name);
+
+//     temp -> node_data -> value = malloc(sizeof(VALUE));
+//     temp -> node_data -> value -> i = value;
+
+//     // printf("%d\n\n", temp -> node_data -> value -> i);
+
+//     // temp -> child = 
+
+
+// }
+
+TREE_NODE *set_value(TREE_NODE **tree, int value) {
+    // TREE_NODE *temp = find_node(tree -> parent
+
+    (*tree) -> node_data -> value = malloc(sizeof(VALUE));
+    (*tree) -> node_data -> value -> i = value;
+
+    char *s;
+    sprintf(s, "%d", value);
+    TREE_NODE *literal = find_node(&((*tree) -> parent), s);
+
+    return update_literal_parent(tree, &literal);
+
+    // (*tree) -> child = 
+
+}
+
+TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal) {
+    TREE_NODE *temp = (*tree) -> parent -> child;
+    TREE_NODE *temp1 = NULL;
+
+    while (temp) {
+        if (!strcmp(temp -> node_data -> name, (*literal) -> node_data -> name)) {
+            temp -> parent = (*tree);
+            (*tree) -> child = temp;
+            temp1 -> sibling = NULL;
+
+            return temp;
+        }        
+        temp1 = temp;
+        temp = temp -> sibling;    
+    }
+}
+
 unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {
@@ -271,6 +320,12 @@ unsigned print_tree(TREE_NODE *tree) {
         size += 36;
         size += strlen(tree -> node_data -> name);
         size += 5;
+        if (tree -> node_data -> kind < 8) {
+            size--;
+        }
+        if (tree -> node_data -> type == NO_TYPE) {
+            size++;
+        }
         
         if (indent == 2) {
             size += 1;

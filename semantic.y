@@ -21,9 +21,15 @@
 
     TREE_NODE *root;
     TREE_NODE *current_function;
+    TREE_NODE *current_variable;
+    TREE_NODE *current_literal;
+
+    TREE_NODE *update;
 
     unsigned variable_type = NO_TYPE;
     unsigned post_operator = 0;
+    unsigned literal_type = NO_TYPE;
+    
 
 %}
 
@@ -157,12 +163,20 @@ variables
                 if (!variable) {
                     err("Greska, funckija %s vec ima deklarisan parametar/ variable sa imenom %s\n\n", current_function -> node_data -> name, $1);
                 }
+                else {
+                    current_variable = variable;
+                    // printf("%s\n\n", current_variable -> node_data -> name);
+                }
             }
     |   variables COMMA ID
             {
                 TREE_NODE *variable = make_variable(&current_function, $3, variable_type);
                 if (!variable) {
                     err("Greska, funckija %s vec ima deklarisan parametar/ variable sa imenom %s\n\n", current_function -> node_data -> name, $3);
+                }
+                else {
+                    current_variable = variable;
+                    // printf("%s\n\n", current_variable -> node_data -> name);
                 }
             }
     ;
@@ -195,7 +209,14 @@ assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {
             // TODO: 
-            TREE_NODE *to_assign = find_node(&current_function, $1);
+            current_variable = find_node(&current_function, $1);
+            printf("%s\t%d\n\n", current_variable -> node_data -> name, $3);
+
+            set_value(&current_variable, $3);
+
+            printf("%d", find_node(&current_function, $1) -> node_data -> value -> i);
+            printf("%s\n\n", current_literal -> node_data -> name);
+
         }
     ;
 
@@ -203,6 +224,8 @@ num_exp
     :   exp 
             {
                 // TODO: 
+                // printf("%s\t%d\n\n", current_function -> node_data -> name, $1);
+                $$ = $1;
             }
     |   num_exp AROP exp 
             {
@@ -214,7 +237,9 @@ exp
     :   literal 
     |   ID post_op
             {
-                update_node(&current_function, $1, post_operator);
+                update = update_node(&current_function, $1, post_operator); 
+                // printf("%s\t%d\n\n", current_function -> node_data -> name, atoi(update -> node_data -> name));
+                // $$ = atoi(update -> node_data -> name);
             }
     |   function_call
             {
@@ -241,11 +266,17 @@ post_op
 literal
     :   INT_NUMBER
             {
-                TREE_NODE *literal = make_literal(&current_function, $1, 1);
+                current_literal = make_literal(&current_function, $1, 1);
+                literal_type = 1;
+                $$ = atoi(current_literal -> node_data -> name);
+                // current_variable -> child = literal;
             }
     |   UINT_NUMBER
             {
-                TREE_NODE *literal = make_literal(&current_function, $1, 2);
+                current_literal = make_literal(&current_function, $1, 2);
+                literal_type = 2;
+                $$ = atoi(current_literal -> node_data -> name);
+                // current_variable -> child = literal;
             }
     ;
 
@@ -357,6 +388,7 @@ return_statement
     :   RETURN num_exp SEMICOLON
             {
                 // TODO: 
+                // if (current_function -> type != )
             }
     |   RETURN SEMICOLON
             {
