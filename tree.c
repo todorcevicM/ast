@@ -32,9 +32,11 @@ TREE_NODE* init_tree() {
 
 TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
     TREE_NODE *function_root = NULL;
+
     // ako slucajno nije kreirao program
     if (!(*tree)) {
         (*tree) = init_tree();
+
         return make_function(tree, name, type);
     }
     // poseban slucaj za kad nema dete
@@ -75,7 +77,7 @@ TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
                 // nije pronasao funkciju sa tim imenom, moze da napravi cvor
                 function_root = create_node(name, FUN, type, NULL, NULL);
                 temp1 -> sibling = function_root;
-                    // moram da uvezem ono sto kreiram
+
                 return function_root;
             }
         }
@@ -83,7 +85,6 @@ TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
 }
 
 TREE_NODE *make_parameter(TREE_NODE **function_node, char* param_name, unsigned type) {
-    // to bi onda bilo to za ovu funkciju
 
     if (!(*function_node)) {
         printf("Greska, niste prosledili funckiju pri kreiranju parametra\n\n");
@@ -91,27 +92,79 @@ TREE_NODE *make_parameter(TREE_NODE **function_node, char* param_name, unsigned 
     }
 
     TREE_NODE *temp = (*function_node) -> parameter;
+    // nema ni jedan parametar
     if (!temp) {
         temp = create_node(param_name, PAR, type, *function_node, NULL);
         (*function_node) -> parameter = temp; 
 
         return temp;
     }
+    // ima barem jedan parametar
     else {
         // provera imena
         while (temp) {
             if (!strcmp(temp -> node_data -> name, param_name)) {
                 printf("Parametar %s vec postoji kao parametar koji funckija %s prima\n\n", param_name, (*function_node) -> node_data -> name); 
+
                 return NULL;
             }
             if (!(temp -> sibling)) {
                 TREE_NODE *temp1 = create_node(param_name, PAR, type, *function_node, NULL);
                 temp -> sibling = temp1;
+
                 return temp1;
             }
-
             temp = temp -> sibling;
         } 
+    }
+}
+
+TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type) {
+    /* 
+        prosledjujem tree zbog globalnih promenljivih za koje sad nemam pravilo
+        ali svakako msm da ce biti ovako lakse
+     */
+    // da li funkcija postoji
+    if (!(*tree)) {
+        printf("Greska, funkcija ne postoji!\n\n");
+        return NULL;
+    }
+    // prvo provera imena sa parametrima koje funkcija prima
+    TREE_NODE *parameter = (*tree) -> parameter;
+    while (parameter) {
+        if (!strcmp(parameter -> node_data -> name, name)) {
+            printf("Greska, funckija %s kao parametar prima vec %s\n\n", (*tree) -> node_data -> name, name);
+
+            return NULL;
+        }
+        parameter = parameter -> sibling;
+    }
+    // ne postoji parametar sa tim imenom
+    TREE_NODE *temp = (*tree) -> child;
+    TREE_NODE *temp1 = NULL;
+    // nema child
+    if (!temp) {
+        TREE_NODE *variable = create_node(name, VAR, type, *tree, NULL);
+        (*tree) -> child = variable;
+
+        return variable;
+    }
+    // ima child
+    else {
+        while (temp) {
+            if (!strcmp(temp -> node_data -> name, name)) {
+                printf("Greska, funckija %s vec ima deklarisanu promenljivu %s\n\n", temp -> parent -> node_data -> name, name);
+
+                return NULL;
+            }
+            temp1 = temp;
+            temp = temp -> sibling;
+        }
+        // dosao je do kraja, treba da kreira cvor
+        TREE_NODE *variable = create_node(name, VAR, type, *tree, NULL);
+        temp1 -> sibling = variable;
+
+        return variable;
     }
 }
 

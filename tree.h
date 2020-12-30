@@ -28,9 +28,11 @@ typedef struct tree_node {
         // moguc, ali nije obavezan za svaki cvor
 } TREE_NODE;
 
+TREE_NODE *create_node(char *name, unsigned kind, unsigned type, TREE_NODE *parent, TREE_NODE *sibling);
 TREE_NODE *init_tree();
 TREE_NODE *make_function(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_parameter(TREE_NODE **function_node, char *name, unsigned type);
+TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type);
 
 unsigned print_tree(TREE_NODE *tree);
 void free_tree(TREE_NODE *tree);

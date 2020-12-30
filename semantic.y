@@ -78,11 +78,7 @@
 
 program
     : function_list
-        {   
-            // printf("%s\t\t", root -> child -> node_data -> name);
-            // ovde sad nece biti ovo lookup symbol 
-            // ici ce provera za tree, i da li u njemu postoji 'main'
-            // printf("aaa\n\n");
+        {
             print_tree(root);
         }
     ;
@@ -159,10 +155,15 @@ variable
 variables 
     :   ID 
             {
-
+                TREE_NODE *variable = make_variable(&current_function, $1, variable_type);
+                // TODO: ako uradim ovako onda nemam mogucnost za globalne za sad
+                if (!variable) {
+                    err("Greska, \n\n");
+                }
             }
     |   variables COMMA ID
             {
+                TREE_NODE *variable = make_variable(&current_function, $3, variable_type);
 
             }
     ;
