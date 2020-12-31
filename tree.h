@@ -47,8 +47,12 @@ TREE_NODE *find_function(TREE_NODE **root, char *name);
 TREE_NODE *find_f(TREE_NODE **root, char *name);
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type);
 TREE_NODE *set_value(TREE_NODE **tree, int value);
-
 TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal);
+TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2);
+TREE_NODE *update_value(TREE_NODE **variable, int value, unsigned value_u, unsigned literal_type);
+
+void test(int a);
+
 
 unsigned print_tree(TREE_NODE *tree);
 void free_tree(TREE_NODE *tree);

@@ -29,6 +29,9 @@
     unsigned variable_type = NO_TYPE;
     unsigned post_operator = 0;
     unsigned literal_type = NO_TYPE;
+    unsigned assign_type = 0;
+    unsigned assign_exp = 0;
+    unsigned post_op_op_var = -1;
     
 
 %}
@@ -73,7 +76,7 @@
 %token PDEC
 %token <i> RELOP 
 
-%type <i> num_exp exp literal function_call arguments rel_exp
+%type <i> num_exp exp literal function_call arguments rel_exp 
 
 %nonassoc ONLY_IF
 %nonassoc ELSE
@@ -176,7 +179,6 @@ variables
                 }
                 else {
                     current_variable = variable;
-                    // printf("%s\n\n", current_variable -> node_data -> name);
                 }
             }
     ;
@@ -195,6 +197,16 @@ statement
     :   compound_statement
     |   assignment_statement
     |   function_call SEMICOLON
+    |   ID post_op 
+            {
+                if (post_operator) {
+                    current_variable = update_node(&current_function, $1, post_operator);
+                    if (!current_variable) {
+                        err("Greska, unsigned vrednost ne moze biti manja od 0\n\n");
+                    }
+                }
+            }
+            SEMICOLON
     |   if_statement
     |   loop_statement
     |   jiro_statement
@@ -207,28 +219,67 @@ compound_statement
 
 assignment_statement
     : ID ASSIGN num_exp SEMICOLON
-        {
-            current_variable = find_node(&current_function, $1);
-            set_value(&current_variable, $3);
+        {   
+            if (assign_exp != 1) {
+                current_variable = find_node(&current_function, $1);
+                set_value(&current_variable, $3);
+            }
+            else if (assign_exp == 1) {
+                current_variable = find_node(&current_function, $1);
+                update_value(&current_variable, $3, $3, literal_type);
+            }
         }
     ;
 
 num_exp
     :   exp 
             {
+                assign_type = 1;
                 $$ = $1;
             }
-    |   num_exp AROP exp 
+    |   num_exp 
             {
-                // TODO: 
+                // printf("aa");
+
             }
+            AROP 
+                {
+                    printf("%d\n\n", AROP);
+                    switch (AROP) {
+                        case 0: printf("+\n\n"); break;
+                        case 1: printf("-"); break;
+                        case 2: printf("*"); break;
+                        case 3: printf("/"); break;
+                        case 4: printf("a"); break;
+
+                        default : printf("kita");
+                    }
+                }
+            exp 
+                {   
+                    assign_type = 2;
+                    // TODO: 
+                    // test(i);
+                }
     ;
 
 exp 
     :   literal 
-    |   ID post_op
-            {
-                update = update_node(&current_function, $1, post_operator); 
+    |   ID post_op_op
+            {   
+                if (post_op_op_var) {
+                    current_variable = update_node(&current_function, $1, post_operator); 
+                }
+                else {
+                    current_variable = find_node(&current_function, $1);
+                }
+                assign_exp = 1;
+                if (current_variable -> node_data -> type == INT) {
+                    $$ = current_variable -> node_data -> value -> i; 
+                }
+                else if (current_variable -> node_data -> type == UINT) {
+                    $$ = current_variable -> node_data -> value -> u; 
+                }
             }
     |   function_call
             {
@@ -241,8 +292,7 @@ exp
     ;
 
 post_op
-    :   /*  */
-    |   PINC
+    :   PINC
             {
                 post_operator = 1;
             }
@@ -252,20 +302,29 @@ post_op
             }
     ;
 
+post_op_op
+    :   
+        {
+            post_op_op_var = 0;
+        }
+    |   post_op
+        {
+            post_op_op_var = post_operator;
+        }
+    ;
+
 literal
     :   INT_NUMBER
             {
                 current_literal = make_literal(&current_function, $1, 1);
                 literal_type = 1;
                 $$ = atoi(current_literal -> node_data -> name);
-                // current_variable -> child = literal;
             }
     |   UINT_NUMBER
             {
                 current_literal = make_literal(&current_function, $1, 2);
                 literal_type = 2;
                 $$ = atoi(current_literal -> node_data -> name);
-                // current_variable -> child = literal;
             }
     ;
 

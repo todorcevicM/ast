@@ -246,23 +246,68 @@ TREE_NODE *find_f(TREE_NODE **root, char *name) {
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
     TREE_NODE *temp = find_node(root, name);
     int i;
-    char *s;
+    int type = temp -> node_data -> type;
+    char *s = malloc(sizeof(char *));
+    temp = temp -> child;
 
-    if (update_type == 1) {
-        i = atoi(temp -> node_data -> name);
-        i++;
-        sprintf(s, "%d", i);
-        strcpy(temp -> node_data -> name, s);
+    if (type == INT) {
+        if (update_type == 1) {
+            temp -> node_data -> value -> i++;
+            i = atoi(temp -> node_data -> name);
+            i++;
+            sprintf(s, "%d", i);
+            strcpy(temp -> node_data -> name, s);
+        }
+        else if (update_type == 2) {
+            temp -> node_data -> value -> i--;
+            i = atoi(temp -> node_data -> name);
+            i--;
+            sprintf(s, "%d", i);
+            strcpy(temp -> node_data -> name, s);
+        }
     }
-    else if (update_type == 2) {
-        i = atoi(temp -> node_data -> name);
-        i--;
-        sprintf(s, "%d", i);
-        strcpy(temp -> node_data -> name, s);
+    else if (type == UINT) {
+        if (update_type == 1) {
+            temp -> node_data -> value -> u++;
+            i = atoi(temp -> node_data -> name);
+            i++;
+            sprintf(s, "%d", i);
+            strcpy(temp -> node_data -> name, s);
+        }
+        else if (update_type == 2) {
+            temp -> node_data -> value -> u--;
+            i = atoi(temp -> node_data -> name);
+            i--;
+            if (i < 0) {
+                printf("Greska, unsigned vrednost ne moze biti manja od 0\n\n");
+                return NULL;
+            }
+            sprintf(s, "%d", i);
+            strcpy(temp -> node_data -> name, s);
+        }
     }
 
     return temp;
 }
+
+TREE_NODE *update_value(TREE_NODE **variable, int value_i, unsigned value_u, unsigned literal_type) {
+    TREE_NODE *temp = (*variable) -> child;
+    int i;
+    char *s = malloc(sizeof(char *));
+
+    if (temp) {
+        if (literal_type == INT) {
+            (*variable) -> node_data -> value -> i = value_i;
+            sprintf(s, "%d", value_i);
+            strcpy(temp -> node_data -> name, s);
+        }
+        else if (literal_type == UINT) {
+            (*variable) -> node_data -> value -> u = value_u;
+            sprintf(s, "%d", value_u);
+            strcpy(temp -> node_data -> name, s);
+        }
+    }
+} 
 
 TREE_NODE *set_value(TREE_NODE **tree, int value) {
 
@@ -291,6 +336,26 @@ TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal) {
         temp1 = temp;
         temp = temp -> sibling;    
     }
+}
+
+TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2) {
+    
+}
+
+void test(int a) {
+    char *s;
+
+    switch (a) {
+        case ADD: s = "+"; break;
+        case SUB: s = "-"; break;
+        case MUL: s = "*"; break;
+        case DIV: s = "/"; break;
+        case MIV: s = "%"; break;
+        default: s = ""; break;
+    }
+
+    printf("%s", s);
+
 }
 
 unsigned print_tree(TREE_NODE *tree) {
@@ -372,6 +437,7 @@ unsigned print_tree(TREE_NODE *tree) {
 
         return 0;
     }
+
     return 1;
 }
 
