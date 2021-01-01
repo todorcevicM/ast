@@ -42,16 +42,16 @@ TREE_NODE *make_function(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_parameter(TREE_NODE **function_node, char *name, unsigned type);
 TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_literal(TREE_NODE **tree, char  *name, unsigned type);
-TREE_NODE *find_node(TREE_NODE **root, char *name);
+TREE_NODE *find_node(TREE_NODE **root, char *name, unsigned order);
 TREE_NODE *find_function(TREE_NODE **root, char *name);
 TREE_NODE *find_f(TREE_NODE **root, char *name);
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type);
 TREE_NODE *set_value(TREE_NODE **tree, int value);
 TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal);
-TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2);
+TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2, int arop);
 TREE_NODE *update_value(TREE_NODE **variable, int value, unsigned value_u, unsigned literal_type);
 
-void test(int a);
+char *test(int a);
 
 
 unsigned print_tree(TREE_NODE *tree);

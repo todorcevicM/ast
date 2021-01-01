@@ -195,29 +195,49 @@ TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
     }
 }
 
-TREE_NODE *find_node(TREE_NODE **root, char *name) {
+TREE_NODE *find_node(TREE_NODE **root, char *name, unsigned order) {
     TREE_NODE *temp = NULL;
 
+    /* 
+        order == 1 => prvi, "najvisi"
+        order == 2 => naci ce poslednji "najnizi"
+     */
+
     if (!strcmp((*root) -> node_data -> name, name)) {
-        // printf("%s\n\n", (*root) -> parent -> node_data -> name);
         return *root;
     }
     if ((*root) -> node_data -> kind == FUN) {
-        temp = find_node(&((*root) -> parameter), name);
-        if (temp) {
-            return temp;
-        }
-    }    
-    if ((*root) -> child) {
-        temp = find_node(&((*root) -> child), name);
+        temp = find_node(&((*root) -> parameter), name, order);
         if (temp) {
             return temp;
         }
     }
-    if ((*root) -> sibling) {
-        temp = find_node(&((*root) -> sibling), name);
-        if (temp) {
-            return temp;
+    if (order == 1) {
+        if ((*root) -> child) {
+            temp = find_node(&((*root) -> child), name, order);
+            if (temp) {
+                return temp;
+            }
+        }
+        if ((*root) -> sibling) {
+            temp = find_node(&((*root) -> sibling), name, order);
+            if (temp) {
+                return temp;
+            }
+        }
+    }
+    else if (order == 2) {
+        if ((*root) -> child) {
+            temp = find_node(&((*root) -> child), name, order);
+            if (temp) {
+                return temp;
+            }
+        }
+        if ((*root) -> sibling) {
+            temp = find_node(&((*root) -> sibling), name, order);
+            if (temp) {
+                return temp;
+            }
         }
     }
 }
@@ -244,7 +264,7 @@ TREE_NODE *find_f(TREE_NODE **root, char *name) {
 }
 
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
-    TREE_NODE *temp = find_node(root, name);
+    TREE_NODE *temp = find_node(root, name, 1);
     int i;
     int type = temp -> node_data -> type;
     char *s = malloc(sizeof(char *));
@@ -316,7 +336,7 @@ TREE_NODE *set_value(TREE_NODE **tree, int value) {
 
     char *s;
     sprintf(s, "%d", value);
-    TREE_NODE *literal = find_node(&((*tree) -> parent), s);
+    TREE_NODE *literal = find_node(&((*tree) -> parent), s, 1);
 
     return update_literal_parent(tree, &literal);
 }
@@ -338,11 +358,14 @@ TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal) {
     }
 }
 
-TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2) {
-    
+TREE_NODE *make_arop(TREE_NODE **function, TREE_NODE *exp1, TREE_NODE *exp2, int arop) {
+    char *s = test(arop);
+
+    printf("%s\n\n", s);
+
 }
 
-void test(int a) {
+char* test(int a) {
     char *s;
 
     switch (a) {
@@ -354,8 +377,9 @@ void test(int a) {
         default: s = ""; break;
     }
 
-    printf("%s", s);
+    printf("%s\n\n", s);
 
+    return s;
 }
 
 unsigned print_tree(TREE_NODE *tree) {

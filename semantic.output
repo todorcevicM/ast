@@ -58,72 +58,67 @@ Grammar
    34 assignment_statement: ID ASSIGN num_exp SEMICOLON
 
    35 num_exp: exp
+   36        | num_exp AROP exp
 
-   36 $@5: %empty
+   37 exp: literal
+   38    | ID post_op_op
+   39    | function_call
+   40    | LPAREN num_exp RPAREN
 
-   37 $@6: %empty
+   41 post_op: PINC
+   42        | PDEC
 
-   38 num_exp: num_exp $@5 AROP $@6 exp
+   43 post_op_op: %empty
+   44           | post_op
 
-   39 exp: literal
-   40    | ID post_op_op
-   41    | function_call
-   42    | LPAREN num_exp RPAREN
+   45 literal: INT_NUMBER
+   46        | UINT_NUMBER
 
-   43 post_op: PINC
-   44        | PDEC
+   47 $@5: %empty
 
-   45 post_op_op: %empty
-   46           | post_op
+   48 function_call: ID $@5 LPAREN argument_s RPAREN
 
-   47 literal: INT_NUMBER
-   48        | UINT_NUMBER
+   49 argument_s: %empty
+   50           | arguments
 
-   49 $@7: %empty
+   51 arguments: num_exp
+   52          | arguments COMMA num_exp
 
-   50 function_call: ID $@7 LPAREN argument_s RPAREN
+   53 if_statement: if_part
+   54             | if_part ELSE statement
 
-   51 argument_s: %empty
-   52           | arguments
+   55 if_part: IF LPAREN rel_exp RPAREN statement
 
-   53 arguments: num_exp
-   54          | arguments COMMA num_exp
+   56 rel_exp: num_exp RELOP num_exp
 
-   55 if_statement: if_part
-   56             | if_part ELSE statement
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
 
-   57 if_part: IF LPAREN rel_exp RPAREN statement
+   58 loop_opt: %empty
+   59         | COMMA literal
 
-   58 rel_exp: num_exp RELOP num_exp
+   60 $@6: %empty
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
+   61 $@7: %empty
 
-   60 loop_opt: %empty
-   61         | COMMA literal
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
-   62 $@8: %empty
+   63 jiro_exp: ID
 
-   63 $@9: %empty
+   64 $@8: %empty
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   65 tranga_body: TRANGA literal $@8 DO statement finish_opt
 
-   65 jiro_exp: ID
+   66 finish_opt: %empty
+   67           | FINISH SEMICOLON
 
-   66 $@10: %empty
+   68 tranga_opt: %empty
+   69           | tranga_body tranga_opt
 
-   67 tranga_body: TRANGA literal $@10 DO statement finish_opt
+   70 toreana_opt: %empty
+   71            | TOREANA DO statement
 
-   68 finish_opt: %empty
-   69           | FINISH SEMICOLON
-
-   70 tranga_opt: %empty
-   71           | tranga_body tranga_opt
-
-   72 toreana_opt: %empty
-   73            | TOREANA DO statement
-
-   74 return_statement: RETURN num_exp SEMICOLON
-   75                 | RETURN SEMICOLON
+   72 return_statement: RETURN num_exp SEMICOLON
+   73                 | RETURN SEMICOLON
 
 
 Terminals, with rules where they appear
@@ -132,31 +127,31 @@ Terminals, with rules where they appear
     error (256)
     TYPE <i> (258) 5 12 17
     V_TYPE <i> (259) 7
-    ID <s> (260) 5 7 12 18 19 28 34 40 50 59 65
-    INT_NUMBER <s> (261) 47
-    UINT_NUMBER <s> (262) 48
-    IF (263) 57
-    ELSE (264) 56
-    RETURN (265) 74 75
-    LOOP (266) 59
-    JIRO (267) 64
-    TRANGA (268) 67
-    TOREANA (269) 73
-    FINISH (270) 69
-    LABRACKET (271) 64
-    RABRACKET (272) 64
-    DO (273) 67 73
-    SEMICOLON (274) 17 26 28 34 69 74 75
-    COMMA (275) 11 19 54 59 61
-    LPAREN (276) 5 7 42 50 57 59
-    RPAREN (277) 5 7 42 50 57 59
-    LBRACKET (278) 13 33 64
-    RBRACKET (279) 13 33 64
+    ID <s> (260) 5 7 12 18 19 28 34 38 48 57 63
+    INT_NUMBER <s> (261) 45
+    UINT_NUMBER <s> (262) 46
+    IF (263) 55
+    ELSE (264) 54
+    RETURN (265) 72 73
+    LOOP (266) 57
+    JIRO (267) 62
+    TRANGA (268) 65
+    TOREANA (269) 71
+    FINISH (270) 67
+    LABRACKET (271) 62
+    RABRACKET (272) 62
+    DO (273) 65 71
+    SEMICOLON (274) 17 26 28 34 67 72 73
+    COMMA (275) 11 19 52 57 59
+    LPAREN (276) 5 7 40 48 55 57
+    RPAREN (277) 5 7 40 48 55 57
+    LBRACKET (278) 13 33 62
+    RBRACKET (279) 13 33 62
     ASSIGN (280) 34
-    AROP <i> (281) 38
-    PINC (282) 43
-    PDEC (283) 44
-    RELOP <i> (284) 58
+    AROP <i> (281) 36
+    PINC (282) 41
+    PDEC (283) 42
+    RELOP <i> (284) 56
     ONLY_IF (285)
 
 
@@ -211,7 +206,7 @@ Nonterminals, with rules where they appear
         on right: 21 23
     statement (47)
         on left: 24 25 26 28 29 30 31 32
-        on right: 22 23 56 57 59 67 73
+        on right: 22 23 54 55 57 65 71
     $@4 (48)
         on left: 27
         on right: 28
@@ -222,82 +217,76 @@ Nonterminals, with rules where they appear
         on left: 34
         on right: 25
     num_exp <i> (51)
-        on left: 35 38
-        on right: 34 38 42 53 54 58 74
-    $@5 (52)
-        on left: 36
-        on right: 38
-    $@6 (53)
-        on left: 37
-        on right: 38
-    exp <i> (54)
-        on left: 39 40 41 42
-        on right: 35 38
-    post_op (55)
+        on left: 35 36
+        on right: 34 36 40 51 52 56 72
+    exp <i> (52)
+        on left: 37 38 39 40
+        on right: 35 36
+    post_op (53)
+        on left: 41 42
+        on right: 28 44
+    post_op_op (54)
         on left: 43 44
-        on right: 28 46
-    post_op_op (56)
+        on right: 38
+    literal <i> (55)
         on left: 45 46
-        on right: 40
-    literal <i> (57)
-        on left: 47 48
-        on right: 39 59 61 67
-    function_call <i> (58)
-        on left: 50
-        on right: 26 41
-    $@7 (59)
-        on left: 49
-        on right: 50
-    argument_s (60)
+        on right: 37 57 59 65
+    function_call <i> (56)
+        on left: 48
+        on right: 26 39
+    $@5 (57)
+        on left: 47
+        on right: 48
+    argument_s (58)
+        on left: 49 50
+        on right: 48
+    arguments <i> (59)
         on left: 51 52
-        on right: 50
-    arguments <i> (61)
+        on right: 50 52
+    if_statement (60)
         on left: 53 54
-        on right: 52 54
-    if_statement (62)
-        on left: 55 56
         on right: 29
-    if_part (63)
+    if_part (61)
+        on left: 55
+        on right: 53 54
+    rel_exp <i> (62)
+        on left: 56
+        on right: 55
+    loop_statement (63)
         on left: 57
-        on right: 55 56
-    rel_exp <i> (64)
-        on left: 58
-        on right: 57
-    loop_statement (65)
-        on left: 59
         on right: 30
-    loop_opt (66)
-        on left: 60 61
-        on right: 59
-    jiro_statement (67)
-        on left: 64
-        on right: 31
-    $@8 (68)
+    loop_opt (64)
+        on left: 58 59
+        on right: 57
+    jiro_statement (65)
         on left: 62
-        on right: 64
-    $@9 (69)
+        on right: 31
+    $@6 (66)
+        on left: 60
+        on right: 62
+    $@7 (67)
+        on left: 61
+        on right: 62
+    jiro_exp (68)
         on left: 63
-        on right: 64
-    jiro_exp (70)
+        on right: 62
+    tranga_body (69)
         on left: 65
-        on right: 64
-    tranga_body (71)
-        on left: 67
-        on right: 64 71
-    $@10 (72)
-        on left: 66
-        on right: 67
-    finish_opt (73)
+        on right: 62 69
+    $@8 (70)
+        on left: 64
+        on right: 65
+    finish_opt (71)
+        on left: 66 67
+        on right: 65
+    tranga_opt (72)
         on left: 68 69
-        on right: 67
-    tranga_opt (74)
+        on right: 62 69
+    toreana_opt (73)
         on left: 70 71
-        on right: 64 71
-    toreana_opt (75)
+        on right: 62
+    return_statement (74)
         on left: 72 73
-        on right: 64
-    return_statement (76)
-        on left: 74 75
         on right: 32
 
 
@@ -570,29 +559,29 @@ State 29
 
    28 statement: ID . post_op $@4 SEMICOLON
    34 assignment_statement: ID . ASSIGN num_exp SEMICOLON
-   50 function_call: ID . $@7 LPAREN argument_s RPAREN
+   48 function_call: ID . $@5 LPAREN argument_s RPAREN
 
     ASSIGN  shift, and go to state 48
     PINC    shift, and go to state 49
     PDEC    shift, and go to state 50
 
-    $default  reduce using rule 49 ($@7)
+    $default  reduce using rule 47 ($@5)
 
     post_op  go to state 51
-    $@7      go to state 52
+    $@5      go to state 52
 
 
 State 30
 
-   57 if_part: IF . LPAREN rel_exp RPAREN statement
+   55 if_part: IF . LPAREN rel_exp RPAREN statement
 
     LPAREN  shift, and go to state 53
 
 
 State 31
 
-   74 return_statement: RETURN . num_exp SEMICOLON
-   75                 | RETURN . SEMICOLON
+   72 return_statement: RETURN . num_exp SEMICOLON
+   73                 | RETURN . SEMICOLON
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
@@ -608,18 +597,18 @@ State 31
 
 State 32
 
-   59 loop_statement: LOOP . LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
+   57 loop_statement: LOOP . LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement
 
     LPAREN  shift, and go to state 63
 
 
 State 33
 
-   64 jiro_statement: JIRO . $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   62 jiro_statement: JIRO . $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
-    $default  reduce using rule 62 ($@8)
+    $default  reduce using rule 60 ($@6)
 
-    $@8  go to state 64
+    $@6  go to state 64
 
 
 State 34
@@ -724,12 +713,12 @@ State 42
 
 State 43
 
-   55 if_statement: if_part .
-   56             | if_part . ELSE statement
+   53 if_statement: if_part .
+   54             | if_part . ELSE statement
 
     ELSE  shift, and go to state 69
 
-    $default  reduce using rule 55 (if_statement)
+    $default  reduce using rule 53 (if_statement)
 
 
 State 44
@@ -779,16 +768,16 @@ State 48
 
 State 49
 
-   43 post_op: PINC .
+   41 post_op: PINC .
 
-    $default  reduce using rule 43 (post_op)
+    $default  reduce using rule 41 (post_op)
 
 
 State 50
 
-   44 post_op: PDEC .
+   42 post_op: PDEC .
 
-    $default  reduce using rule 44 (post_op)
+    $default  reduce using rule 42 (post_op)
 
 
 State 51
@@ -802,14 +791,14 @@ State 51
 
 State 52
 
-   50 function_call: ID $@7 . LPAREN argument_s RPAREN
+   48 function_call: ID $@5 . LPAREN argument_s RPAREN
 
     LPAREN  shift, and go to state 74
 
 
 State 53
 
-   57 if_part: IF LPAREN . rel_exp RPAREN statement
+   55 if_part: IF LPAREN . rel_exp RPAREN statement
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
@@ -825,44 +814,44 @@ State 53
 
 State 54
 
-   40 exp: ID . post_op_op
-   50 function_call: ID . $@7 LPAREN argument_s RPAREN
+   38 exp: ID . post_op_op
+   48 function_call: ID . $@5 LPAREN argument_s RPAREN
 
     PINC  shift, and go to state 49
     PDEC  shift, and go to state 50
 
-    LPAREN    reduce using rule 49 ($@7)
-    $default  reduce using rule 45 (post_op_op)
+    LPAREN    reduce using rule 47 ($@5)
+    $default  reduce using rule 43 (post_op_op)
 
     post_op     go to state 77
     post_op_op  go to state 78
-    $@7         go to state 52
+    $@5         go to state 52
 
 
 State 55
 
-   47 literal: INT_NUMBER .
+   45 literal: INT_NUMBER .
 
-    $default  reduce using rule 47 (literal)
+    $default  reduce using rule 45 (literal)
 
 
 State 56
 
-   48 literal: UINT_NUMBER .
+   46 literal: UINT_NUMBER .
 
-    $default  reduce using rule 48 (literal)
+    $default  reduce using rule 46 (literal)
 
 
 State 57
 
-   75 return_statement: RETURN SEMICOLON .
+   73 return_statement: RETURN SEMICOLON .
 
-    $default  reduce using rule 75 (return_statement)
+    $default  reduce using rule 73 (return_statement)
 
 
 State 58
 
-   42 exp: LPAREN . num_exp RPAREN
+   40 exp: LPAREN . num_exp RPAREN
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
@@ -877,14 +866,11 @@ State 58
 
 State 59
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   74 return_statement: RETURN num_exp . SEMICOLON
+   36 num_exp: num_exp . AROP exp
+   72 return_statement: RETURN num_exp . SEMICOLON
 
     SEMICOLON  shift, and go to state 80
-
-    $default  reduce using rule 36 ($@5)
-
-    $@5  go to state 81
+    AROP       shift, and go to state 81
 
 
 State 60
@@ -896,28 +882,28 @@ State 60
 
 State 61
 
-   39 exp: literal .
+   37 exp: literal .
 
-    $default  reduce using rule 39 (exp)
+    $default  reduce using rule 37 (exp)
 
 
 State 62
 
-   41 exp: function_call .
+   39 exp: function_call .
 
-    $default  reduce using rule 41 (exp)
+    $default  reduce using rule 39 (exp)
 
 
 State 63
 
-   59 loop_statement: LOOP LPAREN . ID COMMA literal COMMA literal loop_opt RPAREN statement
+   57 loop_statement: LOOP LPAREN . ID COMMA literal COMMA literal loop_opt RPAREN statement
 
     ID  shift, and go to state 82
 
 
 State 64
 
-   64 jiro_statement: JIRO $@8 . LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   62 jiro_statement: JIRO $@6 . LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
     LABRACKET  shift, and go to state 83
 
@@ -952,7 +938,7 @@ State 68
 
 State 69
 
-   56 if_statement: if_part ELSE . statement
+   54 if_statement: if_part ELSE . statement
 
     ID        shift, and go to state 29
     IF        shift, and go to state 30
@@ -991,13 +977,10 @@ State 71
 State 72
 
    34 assignment_statement: ID ASSIGN num_exp . SEMICOLON
-   38 num_exp: num_exp . $@5 AROP $@6 exp
+   36 num_exp: num_exp . AROP exp
 
     SEMICOLON  shift, and go to state 88
-
-    $default  reduce using rule 36 ($@5)
-
-    $@5  go to state 81
+    AROP       shift, and go to state 81
 
 
 State 73
@@ -1009,14 +992,14 @@ State 73
 
 State 74
 
-   50 function_call: ID $@7 LPAREN . argument_s RPAREN
+   48 function_call: ID $@5 LPAREN . argument_s RPAREN
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
     UINT_NUMBER  shift, and go to state 56
     LPAREN       shift, and go to state 58
 
-    $default  reduce using rule 51 (argument_s)
+    $default  reduce using rule 49 (argument_s)
 
     num_exp        go to state 90
     exp            go to state 60
@@ -1028,73 +1011,74 @@ State 74
 
 State 75
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   58 rel_exp: num_exp . RELOP num_exp
+   36 num_exp: num_exp . AROP exp
+   56 rel_exp: num_exp . RELOP num_exp
 
+    AROP   shift, and go to state 81
     RELOP  shift, and go to state 93
-
-    $default  reduce using rule 36 ($@5)
-
-    $@5  go to state 81
 
 
 State 76
 
-   57 if_part: IF LPAREN rel_exp . RPAREN statement
+   55 if_part: IF LPAREN rel_exp . RPAREN statement
 
     RPAREN  shift, and go to state 94
 
 
 State 77
 
-   46 post_op_op: post_op .
+   44 post_op_op: post_op .
 
-    $default  reduce using rule 46 (post_op_op)
+    $default  reduce using rule 44 (post_op_op)
 
 
 State 78
 
-   40 exp: ID post_op_op .
+   38 exp: ID post_op_op .
 
-    $default  reduce using rule 40 (exp)
+    $default  reduce using rule 38 (exp)
 
 
 State 79
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   42 exp: LPAREN num_exp . RPAREN
+   36 num_exp: num_exp . AROP exp
+   40 exp: LPAREN num_exp . RPAREN
 
     RPAREN  shift, and go to state 95
-
-    $default  reduce using rule 36 ($@5)
-
-    $@5  go to state 81
+    AROP    shift, and go to state 81
 
 
 State 80
 
-   74 return_statement: RETURN num_exp SEMICOLON .
+   72 return_statement: RETURN num_exp SEMICOLON .
 
-    $default  reduce using rule 74 (return_statement)
+    $default  reduce using rule 72 (return_statement)
 
 
 State 81
 
-   38 num_exp: num_exp $@5 . AROP $@6 exp
+   36 num_exp: num_exp AROP . exp
 
-    AROP  shift, and go to state 96
+    ID           shift, and go to state 54
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
+    LPAREN       shift, and go to state 58
+
+    exp            go to state 96
+    literal        go to state 61
+    function_call  go to state 62
 
 
 State 82
 
-   59 loop_statement: LOOP LPAREN ID . COMMA literal COMMA literal loop_opt RPAREN statement
+   57 loop_statement: LOOP LPAREN ID . COMMA literal COMMA literal loop_opt RPAREN statement
 
     COMMA  shift, and go to state 97
 
 
 State 83
 
-   64 jiro_statement: JIRO $@8 LABRACKET . jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   62 jiro_statement: JIRO $@6 LABRACKET . jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
     ID  shift, and go to state 98
 
@@ -1110,9 +1094,9 @@ State 84
 
 State 85
 
-   56 if_statement: if_part ELSE statement .
+   54 if_statement: if_part ELSE statement .
 
-    $default  reduce using rule 56 (if_statement)
+    $default  reduce using rule 54 (if_statement)
 
 
 State 86
@@ -1145,35 +1129,34 @@ State 89
 
 State 90
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   53 arguments: num_exp .
+   36 num_exp: num_exp . AROP exp
+   51 arguments: num_exp .
 
-    AROP      reduce using rule 36 ($@5)
-    $default  reduce using rule 53 (arguments)
+    AROP  shift, and go to state 81
 
-    $@5  go to state 81
+    $default  reduce using rule 51 (arguments)
 
 
 State 91
 
-   50 function_call: ID $@7 LPAREN argument_s . RPAREN
+   48 function_call: ID $@5 LPAREN argument_s . RPAREN
 
     RPAREN  shift, and go to state 101
 
 
 State 92
 
-   52 argument_s: arguments .
-   54 arguments: arguments . COMMA num_exp
+   50 argument_s: arguments .
+   52 arguments: arguments . COMMA num_exp
 
     COMMA  shift, and go to state 102
 
-    $default  reduce using rule 52 (argument_s)
+    $default  reduce using rule 50 (argument_s)
 
 
 State 93
 
-   58 rel_exp: num_exp RELOP . num_exp
+   56 rel_exp: num_exp RELOP . num_exp
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
@@ -1188,7 +1171,7 @@ State 93
 
 State 94
 
-   57 if_part: IF LPAREN rel_exp RPAREN . statement
+   55 if_part: IF LPAREN rel_exp RPAREN . statement
 
     ID        shift, and go to state 29
     IF        shift, and go to state 30
@@ -1210,42 +1193,40 @@ State 94
 
 State 95
 
-   42 exp: LPAREN num_exp RPAREN .
+   40 exp: LPAREN num_exp RPAREN .
 
-    $default  reduce using rule 42 (exp)
+    $default  reduce using rule 40 (exp)
 
 
 State 96
 
-   38 num_exp: num_exp $@5 AROP . $@6 exp
+   36 num_exp: num_exp AROP exp .
 
-    $default  reduce using rule 37 ($@6)
-
-    $@6  go to state 105
+    $default  reduce using rule 36 (num_exp)
 
 
 State 97
 
-   59 loop_statement: LOOP LPAREN ID COMMA . literal COMMA literal loop_opt RPAREN statement
+   57 loop_statement: LOOP LPAREN ID COMMA . literal COMMA literal loop_opt RPAREN statement
 
     INT_NUMBER   shift, and go to state 55
     UINT_NUMBER  shift, and go to state 56
 
-    literal  go to state 106
+    literal  go to state 105
 
 
 State 98
 
-   65 jiro_exp: ID .
+   63 jiro_exp: ID .
 
-    $default  reduce using rule 65 (jiro_exp)
+    $default  reduce using rule 63 (jiro_exp)
 
 
 State 99
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp . RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp . RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
-    RABRACKET  shift, and go to state 107
+    RABRACKET  shift, and go to state 106
 
 
 State 100
@@ -1257,21 +1238,21 @@ State 100
 
 State 101
 
-   50 function_call: ID $@7 LPAREN argument_s RPAREN .
+   48 function_call: ID $@5 LPAREN argument_s RPAREN .
 
-    $default  reduce using rule 50 (function_call)
+    $default  reduce using rule 48 (function_call)
 
 
 State 102
 
-   54 arguments: arguments COMMA . num_exp
+   52 arguments: arguments COMMA . num_exp
 
     ID           shift, and go to state 54
     INT_NUMBER   shift, and go to state 55
     UINT_NUMBER  shift, and go to state 56
     LPAREN       shift, and go to state 58
 
-    num_exp        go to state 108
+    num_exp        go to state 107
     exp            go to state 60
     literal        go to state 61
     function_call  go to state 62
@@ -1279,327 +1260,304 @@ State 102
 
 State 103
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   58 rel_exp: num_exp RELOP num_exp .
+   36 num_exp: num_exp . AROP exp
+   56 rel_exp: num_exp RELOP num_exp .
 
-    RPAREN    reduce using rule 58 (rel_exp)
-    $default  reduce using rule 36 ($@5)
+    AROP  shift, and go to state 81
 
-    $@5  go to state 81
+    $default  reduce using rule 56 (rel_exp)
 
 
 State 104
 
-   57 if_part: IF LPAREN rel_exp RPAREN statement .
+   55 if_part: IF LPAREN rel_exp RPAREN statement .
 
-    $default  reduce using rule 57 (if_part)
+    $default  reduce using rule 55 (if_part)
 
 
 State 105
 
-   38 num_exp: num_exp $@5 AROP $@6 . exp
+   57 loop_statement: LOOP LPAREN ID COMMA literal . COMMA literal loop_opt RPAREN statement
 
-    ID           shift, and go to state 54
-    INT_NUMBER   shift, and go to state 55
-    UINT_NUMBER  shift, and go to state 56
-    LPAREN       shift, and go to state 58
-
-    exp            go to state 109
-    literal        go to state 61
-    function_call  go to state 62
+    COMMA  shift, and go to state 108
 
 
 State 106
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal . COMMA literal loop_opt RPAREN statement
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET . LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
-    COMMA  shift, and go to state 110
+    LBRACKET  shift, and go to state 109
 
 
 State 107
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET . LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   36 num_exp: num_exp . AROP exp
+   52 arguments: arguments COMMA num_exp .
 
-    LBRACKET  shift, and go to state 111
+    AROP  shift, and go to state 81
+
+    $default  reduce using rule 52 (arguments)
 
 
 State 108
 
-   38 num_exp: num_exp . $@5 AROP $@6 exp
-   54 arguments: arguments COMMA num_exp .
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA . literal loop_opt RPAREN statement
 
-    AROP      reduce using rule 36 ($@5)
-    $default  reduce using rule 54 (arguments)
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
 
-    $@5  go to state 81
+    literal  go to state 110
 
 
 State 109
 
-   38 num_exp: num_exp $@5 AROP $@6 exp .
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET . tranga_body tranga_opt toreana_opt $@7 RBRACKET
 
-    $default  reduce using rule 38 (num_exp)
+    TRANGA  shift, and go to state 111
+
+    tranga_body  go to state 112
 
 
 State 110
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA . literal loop_opt RPAREN statement
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal . loop_opt RPAREN statement
 
-    INT_NUMBER   shift, and go to state 55
-    UINT_NUMBER  shift, and go to state 56
+    COMMA  shift, and go to state 113
 
-    literal  go to state 112
+    $default  reduce using rule 58 (loop_opt)
+
+    loop_opt  go to state 114
 
 
 State 111
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET . tranga_body tranga_opt toreana_opt $@9 RBRACKET
+   65 tranga_body: TRANGA . literal $@8 DO statement finish_opt
 
-    TRANGA  shift, and go to state 113
+    INT_NUMBER   shift, and go to state 55
+    UINT_NUMBER  shift, and go to state 56
 
-    tranga_body  go to state 114
+    literal  go to state 115
 
 
 State 112
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal . loop_opt RPAREN statement
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body . tranga_opt toreana_opt $@7 RBRACKET
 
-    COMMA  shift, and go to state 115
+    TRANGA  shift, and go to state 111
 
-    $default  reduce using rule 60 (loop_opt)
+    $default  reduce using rule 68 (tranga_opt)
 
-    loop_opt  go to state 116
+    tranga_body  go to state 116
+    tranga_opt   go to state 117
 
 
 State 113
 
-   67 tranga_body: TRANGA . literal $@10 DO statement finish_opt
+   59 loop_opt: COMMA . literal
 
     INT_NUMBER   shift, and go to state 55
     UINT_NUMBER  shift, and go to state 56
 
-    literal  go to state 117
+    literal  go to state 118
 
 
 State 114
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body . tranga_opt toreana_opt $@9 RBRACKET
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt . RPAREN statement
 
-    TRANGA  shift, and go to state 113
-
-    $default  reduce using rule 70 (tranga_opt)
-
-    tranga_body  go to state 118
-    tranga_opt   go to state 119
+    RPAREN  shift, and go to state 119
 
 
 State 115
 
-   61 loop_opt: COMMA . literal
+   65 tranga_body: TRANGA literal . $@8 DO statement finish_opt
 
-    INT_NUMBER   shift, and go to state 55
-    UINT_NUMBER  shift, and go to state 56
+    $default  reduce using rule 64 ($@8)
 
-    literal  go to state 120
+    $@8  go to state 120
 
 
 State 116
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt . RPAREN statement
+   69 tranga_opt: tranga_body . tranga_opt
 
-    RPAREN  shift, and go to state 121
+    TRANGA  shift, and go to state 111
+
+    $default  reduce using rule 68 (tranga_opt)
+
+    tranga_body  go to state 116
+    tranga_opt   go to state 121
 
 
 State 117
 
-   67 tranga_body: TRANGA literal . $@10 DO statement finish_opt
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt . toreana_opt $@7 RBRACKET
 
-    $default  reduce using rule 66 ($@10)
+    TOREANA  shift, and go to state 122
 
-    $@10  go to state 122
+    $default  reduce using rule 70 (toreana_opt)
+
+    toreana_opt  go to state 123
 
 
 State 118
 
-   71 tranga_opt: tranga_body . tranga_opt
+   59 loop_opt: COMMA literal .
 
-    TRANGA  shift, and go to state 113
-
-    $default  reduce using rule 70 (tranga_opt)
-
-    tranga_body  go to state 118
-    tranga_opt   go to state 123
+    $default  reduce using rule 59 (loop_opt)
 
 
 State 119
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt . toreana_opt $@9 RBRACKET
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN . statement
 
-    TOREANA  shift, and go to state 124
+    ID        shift, and go to state 29
+    IF        shift, and go to state 30
+    RETURN    shift, and go to state 31
+    LOOP      shift, and go to state 32
+    JIRO      shift, and go to state 33
+    LBRACKET  shift, and go to state 34
 
-    $default  reduce using rule 72 (toreana_opt)
-
-    toreana_opt  go to state 125
+    statement             go to state 124
+    compound_statement    go to state 39
+    assignment_statement  go to state 40
+    function_call         go to state 41
+    if_statement          go to state 42
+    if_part               go to state 43
+    loop_statement        go to state 44
+    jiro_statement        go to state 45
+    return_statement      go to state 46
 
 
 State 120
 
-   61 loop_opt: COMMA literal .
+   65 tranga_body: TRANGA literal $@8 . DO statement finish_opt
 
-    $default  reduce using rule 61 (loop_opt)
+    DO  shift, and go to state 125
 
 
 State 121
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN . statement
+   69 tranga_opt: tranga_body tranga_opt .
 
-    ID        shift, and go to state 29
-    IF        shift, and go to state 30
-    RETURN    shift, and go to state 31
-    LOOP      shift, and go to state 32
-    JIRO      shift, and go to state 33
-    LBRACKET  shift, and go to state 34
-
-    statement             go to state 126
-    compound_statement    go to state 39
-    assignment_statement  go to state 40
-    function_call         go to state 41
-    if_statement          go to state 42
-    if_part               go to state 43
-    loop_statement        go to state 44
-    jiro_statement        go to state 45
-    return_statement      go to state 46
+    $default  reduce using rule 69 (tranga_opt)
 
 
 State 122
 
-   67 tranga_body: TRANGA literal $@10 . DO statement finish_opt
+   71 toreana_opt: TOREANA . DO statement
 
-    DO  shift, and go to state 127
+    DO  shift, and go to state 126
 
 
 State 123
 
-   71 tranga_opt: tranga_body tranga_opt .
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt . $@7 RBRACKET
 
-    $default  reduce using rule 71 (tranga_opt)
+    $default  reduce using rule 61 ($@7)
+
+    $@7  go to state 127
 
 
 State 124
 
-   73 toreana_opt: TOREANA . DO statement
+   57 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement .
 
-    DO  shift, and go to state 128
+    $default  reduce using rule 57 (loop_statement)
 
 
 State 125
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt . $@9 RBRACKET
+   65 tranga_body: TRANGA literal $@8 DO . statement finish_opt
 
-    $default  reduce using rule 63 ($@9)
+    ID        shift, and go to state 29
+    IF        shift, and go to state 30
+    RETURN    shift, and go to state 31
+    LOOP      shift, and go to state 32
+    JIRO      shift, and go to state 33
+    LBRACKET  shift, and go to state 34
 
-    $@9  go to state 129
+    statement             go to state 128
+    compound_statement    go to state 39
+    assignment_statement  go to state 40
+    function_call         go to state 41
+    if_statement          go to state 42
+    if_part               go to state 43
+    loop_statement        go to state 44
+    jiro_statement        go to state 45
+    return_statement      go to state 46
 
 
 State 126
 
-   59 loop_statement: LOOP LPAREN ID COMMA literal COMMA literal loop_opt RPAREN statement .
+   71 toreana_opt: TOREANA DO . statement
 
-    $default  reduce using rule 59 (loop_statement)
+    ID        shift, and go to state 29
+    IF        shift, and go to state 30
+    RETURN    shift, and go to state 31
+    LOOP      shift, and go to state 32
+    JIRO      shift, and go to state 33
+    LBRACKET  shift, and go to state 34
+
+    statement             go to state 129
+    compound_statement    go to state 39
+    assignment_statement  go to state 40
+    function_call         go to state 41
+    if_statement          go to state 42
+    if_part               go to state 43
+    loop_statement        go to state 44
+    jiro_statement        go to state 45
+    return_statement      go to state 46
 
 
 State 127
 
-   67 tranga_body: TRANGA literal $@10 DO . statement finish_opt
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 . RBRACKET
 
-    ID        shift, and go to state 29
-    IF        shift, and go to state 30
-    RETURN    shift, and go to state 31
-    LOOP      shift, and go to state 32
-    JIRO      shift, and go to state 33
-    LBRACKET  shift, and go to state 34
-
-    statement             go to state 130
-    compound_statement    go to state 39
-    assignment_statement  go to state 40
-    function_call         go to state 41
-    if_statement          go to state 42
-    if_part               go to state 43
-    loop_statement        go to state 44
-    jiro_statement        go to state 45
-    return_statement      go to state 46
+    RBRACKET  shift, and go to state 130
 
 
 State 128
 
-   73 toreana_opt: TOREANA DO . statement
+   65 tranga_body: TRANGA literal $@8 DO statement . finish_opt
 
-    ID        shift, and go to state 29
-    IF        shift, and go to state 30
-    RETURN    shift, and go to state 31
-    LOOP      shift, and go to state 32
-    JIRO      shift, and go to state 33
-    LBRACKET  shift, and go to state 34
+    FINISH  shift, and go to state 131
 
-    statement             go to state 131
-    compound_statement    go to state 39
-    assignment_statement  go to state 40
-    function_call         go to state 41
-    if_statement          go to state 42
-    if_part               go to state 43
-    loop_statement        go to state 44
-    jiro_statement        go to state 45
-    return_statement      go to state 46
+    $default  reduce using rule 66 (finish_opt)
+
+    finish_opt  go to state 132
 
 
 State 129
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 . RBRACKET
+   71 toreana_opt: TOREANA DO statement .
 
-    RBRACKET  shift, and go to state 132
+    $default  reduce using rule 71 (toreana_opt)
 
 
 State 130
 
-   67 tranga_body: TRANGA literal $@10 DO statement . finish_opt
+   62 jiro_statement: JIRO $@6 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@7 RBRACKET .
 
-    FINISH  shift, and go to state 133
-
-    $default  reduce using rule 68 (finish_opt)
-
-    finish_opt  go to state 134
+    $default  reduce using rule 62 (jiro_statement)
 
 
 State 131
 
-   73 toreana_opt: TOREANA DO statement .
+   67 finish_opt: FINISH . SEMICOLON
 
-    $default  reduce using rule 73 (toreana_opt)
+    SEMICOLON  shift, and go to state 133
 
 
 State 132
 
-   64 jiro_statement: JIRO $@8 LABRACKET jiro_exp RABRACKET LBRACKET tranga_body tranga_opt toreana_opt $@9 RBRACKET .
+   65 tranga_body: TRANGA literal $@8 DO statement finish_opt .
 
-    $default  reduce using rule 64 (jiro_statement)
+    $default  reduce using rule 65 (tranga_body)
 
 
 State 133
 
-   69 finish_opt: FINISH . SEMICOLON
+   67 finish_opt: FINISH SEMICOLON .
 
-    SEMICOLON  shift, and go to state 135
-
-
-State 134
-
-   67 tranga_body: TRANGA literal $@10 DO statement finish_opt .
-
-    $default  reduce using rule 67 (tranga_body)
-
-
-State 135
-
-   69 finish_opt: FINISH SEMICOLON .
-
-    $default  reduce using rule 69 (finish_opt)
+    $default  reduce using rule 67 (finish_opt)

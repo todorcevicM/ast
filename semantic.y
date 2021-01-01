@@ -22,7 +22,8 @@
     TREE_NODE *root;
     TREE_NODE *current_function;
     TREE_NODE *current_variable;
-    TREE_NODE *current_literal;
+    TREE_NODE *current_literal = NULL;
+    TREE_NODE *current_literal_second = NULL;
 
     TREE_NODE *update;
 
@@ -221,11 +222,11 @@ assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {   
             if (assign_exp != 1) {
-                current_variable = find_node(&current_function, $1);
+                current_variable = find_node(&current_function, $1, 1);
                 set_value(&current_variable, $3);
             }
             else if (assign_exp == 1) {
-                current_variable = find_node(&current_function, $1);
+                current_variable = find_node(&current_function, $1, 1);
                 update_value(&current_variable, $3, $3, literal_type);
             }
         }
@@ -235,31 +236,29 @@ num_exp
     :   exp 
             {
                 assign_type = 1;
+                // current_literal = NULL;
                 $$ = $1;
             }
-    |   num_exp 
-            {
-                // printf("aa");
-
-            }
-            AROP 
-                {
-                    printf("%d\n\n", AROP);
-                    switch (AROP) {
-                        case 0: printf("+\n\n"); break;
-                        case 1: printf("-"); break;
-                        case 2: printf("*"); break;
-                        case 3: printf("/"); break;
-                        case 4: printf("a"); break;
-
-                        default : printf("kita");
-                    }
-                }
-            exp 
+    |   num_exp AROP exp 
                 {   
+                    int a = $2;
                     assign_type = 2;
                     // TODO: 
+                    // TREE_NODE *node = make_arop(&current_function, $1, $3, a);  
                     // test(i);
+                    TREE_NODE *temp1 = NULL;
+                    // do (temp1 = find_node(&current_function, current_literal -> node_data -> name, 2)) {
+
+                    // } while (temp1 -> parent -> node_data -> kind != FUN);
+
+                    temp1 = find_node(&current_function, current_literal -> node_data -> name, 2);
+                    // printf("%s", temp1 -> parent -> node_data -> name);
+
+                    TREE_NODE *arop = make_arop(&current_function, current_literal, current_literal_second, a);
+
+
+                    current_literal = NULL;
+
                 }
     ;
 
@@ -271,7 +270,7 @@ exp
                     current_variable = update_node(&current_function, $1, post_operator); 
                 }
                 else {
-                    current_variable = find_node(&current_function, $1);
+                    current_variable = find_node(&current_function, $1, 1);
                 }
                 assign_exp = 1;
                 if (current_variable -> node_data -> type == INT) {
@@ -315,16 +314,31 @@ post_op_op
 
 literal
     :   INT_NUMBER
-            {
-                current_literal = make_literal(&current_function, $1, 1);
+            {   
                 literal_type = 1;
-                $$ = atoi(current_literal -> node_data -> name);
+
+                if (!current_literal) {
+                    current_literal = make_literal(&current_function, $1, literal_type);
+                    $$ = atoi(current_literal -> node_data -> name);
+                }
+                else {
+                    current_literal_second = make_literal(&current_function, $1, literal_type);
+                    $$ = atoi(current_literal_second -> node_data -> name);
+                }
+
             }
     |   UINT_NUMBER
-            {
-                current_literal = make_literal(&current_function, $1, 2);
+            {   
                 literal_type = 2;
-                $$ = atoi(current_literal -> node_data -> name);
+                
+                if (!current_literal) {
+                    current_literal = make_literal(&current_function, $1, literal_type);
+                    $$ = atoi(current_literal -> node_data -> name);
+                }
+                else {
+                    current_literal_second = make_literal(&current_function, $1, literal_type);
+                    $$ = atoi(current_literal_second -> node_data -> name);
+                }
             }
     ;
 
