@@ -42,7 +42,7 @@ TREE_NODE *make_function(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_parameter(TREE_NODE **function_node, char *name, unsigned type);
 TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type);
 TREE_NODE *make_literal(TREE_NODE **tree, char  *name, unsigned type);
-TREE_NODE *find_node(TREE_NODE **root, char *name, unsigned order);
+TREE_NODE *find_node(TREE_NODE **root, char *name);
 TREE_NODE *find_function(TREE_NODE **root, char *name);
 TREE_NODE *find_f(TREE_NODE **root, char *name);
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type);

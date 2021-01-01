@@ -195,51 +195,30 @@ TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
     }
 }
 
-TREE_NODE *find_node(TREE_NODE **root, char *name, unsigned order) {
+TREE_NODE *find_node(TREE_NODE **root, char *name) {
     TREE_NODE *temp = NULL;
-
-    /* 
-        order == 1 => prvi, "najvisi"
-        order == 2 => naci ce poslednji "najnizi"
-     */
 
     if (!strcmp((*root) -> node_data -> name, name)) {
         return *root;
     }
     if ((*root) -> node_data -> kind == FUN) {
-        temp = find_node(&((*root) -> parameter), name, order);
+        temp = find_node(&((*root) -> parameter), name);
         if (temp) {
             return temp;
         }
     }
-    if (order == 1) {
-        if ((*root) -> child) {
-            temp = find_node(&((*root) -> child), name, order);
-            if (temp) {
-                return temp;
-            }
+    if ((*root) -> child) {
+        temp = find_node(&((*root) -> child), name);
+        if (temp) {
+            return temp;
         }
-        if ((*root) -> sibling) {
-            temp = find_node(&((*root) -> sibling), name, order);
-            if (temp) {
-                return temp;
-            }
+    if ((*root) -> sibling) {
+        temp = find_node(&((*root) -> sibling), name);
+        if (temp) {
+            return temp;
         }
     }
-    else if (order == 2) {
-        if ((*root) -> child) {
-            temp = find_node(&((*root) -> child), name, order);
-            if (temp) {
-                return temp;
-            }
-        }
-        if ((*root) -> sibling) {
-            temp = find_node(&((*root) -> sibling), name, order);
-            if (temp) {
-                return temp;
-            }
-        }
-    }
+    
 }
 
 TREE_NODE *find_function(TREE_NODE **root, char *name) {

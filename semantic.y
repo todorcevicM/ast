@@ -222,11 +222,11 @@ assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {   
             if (assign_exp != 1) {
-                current_variable = find_node(&current_function, $1, 1);
+                current_variable = find_node(&current_function, $1);
                 set_value(&current_variable, $3);
             }
             else if (assign_exp == 1) {
-                current_variable = find_node(&current_function, $1, 1);
+                current_variable = find_node(&current_function, $1);
                 update_value(&current_variable, $3, $3, literal_type);
             }
         }
@@ -247,11 +247,11 @@ num_exp
                     // TREE_NODE *node = make_arop(&current_function, $1, $3, a);  
                     // test(i);
                     TREE_NODE *temp1 = NULL;
-                    // do (temp1 = find_node(&current_function, current_literal -> node_data -> name, 2)) {
+                    // do (temp1 = find_node(&current_function, current_literal -> node_data -> name)) {
 
                     // } while (temp1 -> parent -> node_data -> kind != FUN);
 
-                    temp1 = find_node(&current_function, current_literal -> node_data -> name, 2);
+                    temp1 = find_node(&current_function, current_literal -> node_data -> name);
                     // printf("%s", temp1 -> parent -> node_data -> name);
 
                     TREE_NODE *arop = make_arop(&current_function, current_literal, current_literal_second, a);
@@ -270,7 +270,7 @@ exp
                     current_variable = update_node(&current_function, $1, post_operator); 
                 }
                 else {
-                    current_variable = find_node(&current_function, $1, 1);
+                    current_variable = find_node(&current_function, $1);
                 }
                 assign_exp = 1;
                 if (current_variable -> node_data -> type == INT) {
