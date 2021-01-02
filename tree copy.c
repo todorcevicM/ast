@@ -352,28 +352,22 @@ TREE_NODE *get_sibling(TREE_NODE **tree, TREE_NODE **is_sibling) {
     }  
 }
 
-TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int arop) {
+TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE *exp1, TREE_NODE *exp2, int arop) {
     char *s = get_arop(arop);
     
     printf("%s\n\n", s);
 
+    return NULL;
+
     TREE_NODE *sibling = get_sibling(tree, exp1);
-    TREE_NODE *arop_node = create_node(s, NO_KIND, NO_TYPE, NULL, NULL);
-
-    printf("%s\n\n", sibling -> node_data -> name);
-    printf("%s\n\n", sibling -> sibling -> node_data -> name);
-    printf("%s\n\n", sibling -> sibling -> sibling -> node_data -> name);
-    arop_node -> child = *exp1;
-    printf("aaaaaaaa%s\n\n", arop_node -> child -> node_data -> name);
-
-    sibling -> child = arop_node;
-    printf("%s\n\n", sibling -> child -> node_data -> name);
-    // printf("%s\n\n", sibling -> child -> sibling -> node_data -> name);
-    sibling -> sibling = NULL;
+    TREE_NODE *arop_node = create_node(s, NO_KIND, NO_TYPE, sibling, NULL);
 
     // sibling -> child = arop_node;
-    // arop_node -> parent = sibling;
-    // printf("%s\n\n", sibling -> child -> node_data -> name);
+    // printf("%s\n\n", sibling -> node_data -> name);
+    // printf("%s\n\n", arop_node -> parent -> node_data -> name);
+    // printf("%s\n\n", arop_node -> parent -> child -> node_data -> name);
+
+    arop_node -> child = *exp1;
 
     arop_node -> node_data -> value = malloc(sizeof(VALUE *));
 
@@ -393,13 +387,9 @@ TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int a
     sibling -> node_data -> value = malloc(sizeof(VALUE *));
     sibling -> node_data -> value -> i = arop_node -> node_data -> value -> i;
 
-    // update_literal_parent(&arop_node, exp1);
-
-    // printf("aaaaaaaaaaaaaaaaaaa%s\n\n", sibling -> child -> node_data -> name);
-    // printf("%s\n\n", (*exp1) -> node_data -> name);
-    // printf("Aa");
-
-
+    printf("%s\n\n", sibling -> sibling -> node_data -> name);
+    printf("%s\n\n", (*exp1) -> node_data -> name);
+    printf("Aa");
 
 }
 

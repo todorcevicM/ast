@@ -24,6 +24,7 @@
     TREE_NODE *current_variable;
     TREE_NODE *current_literal = NULL;
     TREE_NODE *current_literal_second = NULL;
+    TREE_NODE *current_arop;
 
     TREE_NODE *update;
 
@@ -222,12 +223,18 @@ assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {   
             if (assign_exp != 1) {
+                // printf("nnnn");
                 current_variable = find_node(&current_function, $1);
+                // current_variable -> child = current_arop;
+                // printf("%s\n\n", current_variable -> child -> node_data -> name);
                 set_value(&current_variable, $3);
             }
             else if (assign_exp == 1) {
                 current_variable = find_node(&current_function, $1);
                 update_value(&current_variable, $3, $3, literal_type);
+            }
+            else if (assign_type == 2) {
+                printf("aaaaaaaaa");
             }
         }
     ;
@@ -236,29 +243,30 @@ num_exp
     :   exp 
             {
                 assign_type = 1;
-                // current_literal = NULL;
+                // printf("%d\n\n", $1);
                 $$ = $1;
             }
     |   num_exp AROP exp 
                 {   
-                    int a = $2;
-                    assign_type = 2;
                     // TODO: 
-                    // TREE_NODE *node = make_arop(&current_function, $1, $3, a);  
-                    // test(i);
-                    TREE_NODE *temp1 = NULL;
-                    // do (temp1 = find_node(&current_function, current_literal -> node_data -> name)) {
+                    int a = $2;
+                    // printf("%d\t%s\t%d\n\n", $1, get_arop(a), $3);
+                    assign_type = 2;
 
-                    // } while (temp1 -> parent -> node_data -> kind != FUN);
+
+                    TREE_NODE *temp1 = NULL;
 
                     temp1 = find_node(&current_function, current_literal -> node_data -> name);
                     // printf("%s", temp1 -> parent -> node_data -> name);
 
-                    TREE_NODE *arop = make_arop(&current_function, current_literal, current_literal_second, a);
+                    TREE_NODE *arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
+
+                    // current_variable -> child = malloc(sizeof(TREE_NODE *));
+                    // current_variable -> child = arop;
+                    // printf("%s\n\n", current_variable -> child -> node_data -> name);
 
 
                     current_literal = NULL;
-
                 }
     ;
 
@@ -319,10 +327,12 @@ literal
 
                 if (!current_literal) {
                     current_literal = make_literal(&current_function, $1, literal_type);
+                    // printf("%s\n\n", current_literal -> node_data -> name);
                     $$ = atoi(current_literal -> node_data -> name);
                 }
                 else {
                     current_literal_second = make_literal(&current_function, $1, literal_type);
+                    // printf("%s\n\n", current_literal_second -> node_data -> name);
                     $$ = atoi(current_literal_second -> node_data -> name);
                 }
 

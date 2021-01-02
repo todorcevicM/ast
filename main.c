@@ -36,8 +36,8 @@ int main() {
 
     // TREE_NODE *set = set_value(&fun1, "var1", 1);
 
-    TREE_NODE *find1 = find_node(&tree, "1", 1);
-    TREE_NODE *find2 = find_node(&tree, "1", 1);
+    TREE_NODE *find1 = find_node(&tree, "1");
+    TREE_NODE *find2 = find_node(&tree, "1");
 
     printf("%s\n\n%s\n\n", find1 -> parent -> node_data -> name, find2 -> parent -> node_data -> name);
 
