@@ -111,6 +111,8 @@ TREE_NODE *make_parameter(TREE_NODE **function_node, char* param_name, unsigned 
 
                 return NULL;
             }
+            // ovo je trebalo posle while-a
+            // hmm nisam bas siguran kako ovo radi i zasto radi
             if (!(temp -> sibling)) {
                 TREE_NODE *temp1 = create_node(param_name, PAR, type, *function_node, NULL);
                 temp -> sibling = temp1;
