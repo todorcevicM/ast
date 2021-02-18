@@ -3,6 +3,8 @@
 
 int indent = 0;
 
+// creates a node with name name, of kind kind and its type is type
+// has a parent node parent and a sibling node sibling
 TREE_NODE *create_node(char *name, unsigned kind, unsigned type, TREE_NODE *parent, TREE_NODE *sibling) {
     TREE_NODE *node = (TREE_NODE *) malloc(sizeof(TREE_NODE));
     node -> node_data = (NODE_DATA *) malloc(sizeof(NODE_DATA));
@@ -29,57 +31,74 @@ TREE_NODE *create_node(char *name, unsigned kind, unsigned type, TREE_NODE *pare
     return node;
 }
 
+// initialize tree
 TREE_NODE* init_tree() {
+    // initializes the root node
+    // its a node with name program that doesnt have a kind or a type
+    // its pointers to a parend and a child are NULL as it doesnt have either one
     return create_node("program", NO_KIND, NO_TYPE, NULL, NULL);
 }
 
+// creating the function node with name name and type type
+// attaching it to tree
 TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
     TREE_NODE *function_root = NULL;
 
-    // ako slucajno nije kreirao program
+    // if the tree doesnt exist, which it most definitely should but just in case
     if (!(*tree)) {
         (*tree) = init_tree();
 
         return make_function(tree, name, type);
     }
-    // poseban slucaj za kad nema dete
+    // when the tree doesnt have a child and so this function is the only one 
     else if (!((*tree) -> child)) {
         function_root = create_node(name, FUN, type, *tree, NULL);
+        // since the function node has been created now the root tree needs to have it as a child
         (*tree) -> child = function_root;
 
         return function_root;
     }
-    // kada poseduje child 
+    // when a child already exist and so this function is not the first one
     else {
         TREE_NODE *temp = (*tree) -> child;
-        TREE_NODE *temp1 = NULL;
-        // provera za sam child
+        TREE_NODE *last_sibling = NULL;
+
+        // name check with the already existing function which the root node points to
         if (!strcmp(temp -> node_data -> name, name) && temp -> node_data -> kind == FUN) {
-            printf("Greska, funckija sa imenom %s vec postoji\n\n", name);
+            printf("Error, function with the name: %s already exists\n\n", name);
+
             return NULL;
         }
+        // the name is different from the first functions
+        // now i need to check if there already exists a function with the same name but iterating through the functions siblings
         else {
             temp = temp -> sibling;
-            // nema sibling 
+
             if (!temp) {
-                function_root = create_node(name, FUN, type, NULL, NULL);
+                // doesnt have a sibling and so i can just create the function
+                // its parent is also the tree, and it makes some actions easier, but it doesnt have a sibling
+                function_root = create_node(name, FUN, type, *tree, NULL);
                 (*tree) -> child -> sibling = function_root;
 
                 return function_root;
             }
-            // ima sibling
             else {
+                // has a sibling
+                // now i have to iterate to find the last sibling while name checking 
                 while (temp) {
                     if (!strcmp(temp -> node_data -> name, name) && temp -> node_data -> kind == FUN) {
-                        printf("Greska, funckija sa imenom %s vec postoji\n\n", name);
+                        printf("Error, function with the name: %s already exists\n\n", name);
+
                         return NULL;
                     }
-                    temp1 = temp;
+                    // then last_sibling becomes the current temp
+                    last_sibling = temp;
+                    // and if there is no next sibling the last_sibling node gets a sibling that is the node in the making
                     temp = temp -> sibling;
                 }
-                // nije pronasao funkciju sa tim imenom, moze da napravi cvor
-                function_root = create_node(name, FUN, type, NULL, NULL);
-                temp1 -> sibling = function_root;
+                // finished iterating through the siblings
+                function_root = create_node(name, FUN, type, *tree, NULL);
+                last_sibling -> sibling = function_root;
 
                 return function_root;
             }
@@ -87,143 +106,162 @@ TREE_NODE *make_function(TREE_NODE **tree, char* name, unsigned type) {
     }
 }
 
+// creating functions parameters
 TREE_NODE *make_parameter(TREE_NODE **function_node, char* param_name, unsigned type) {
 
+    // check if there exists a function to which im trying to attach the parameters
+    // this will probably never get triggered but again just a check
     if (!(*function_node)) {
-        printf("Greska, niste prosledili funckiju pri kreiranju parametra\n\n");
+        printf("Error, no such function exists\n\n");
+
         return NULL;
     }
 
     TREE_NODE *temp = (*function_node) -> parameter;
-    // nema ni jedan parametar
+    // check if the function already has parameters
     if (!temp) {
+        // the function has no parameters
         temp = create_node(param_name, PAR, type, *function_node, NULL);
+        // after creating the parameter node it needs to be attached to the functions parameters list
         (*function_node) -> parameter = temp; 
 
         return temp;
     }
-    // ima barem jedan parametar
     else {
-        // provera imena
+        // the function has parameters
+        // iterating through the existing parameters and name checking
         while (temp) {
             if (!strcmp(temp -> node_data -> name, param_name)) {
-                printf("Parametar %s vec postoji kao parametar koji funckija %s prima\n\n", param_name, (*function_node) -> node_data -> name); 
+                printf("Error, parameter: %s already exists as a parameter of function: %s\n\n", param_name, (*function_node) -> node_data -> name);
 
                 return NULL;
             }
-            // ovo je trebalo posle while-a
-            // hmm nisam bas siguran kako ovo radi i zasto radi
+            // if the current parameter has no sibling it can make it 
             if (!(temp -> sibling)) {
-                TREE_NODE *temp1 = create_node(param_name, PAR, type, *function_node, NULL);
-                temp -> sibling = temp1;
+                TREE_NODE *new_parameter = create_node(param_name, PAR, type, *function_node, NULL);
+                // also the temp node (current parameter) gets a new sibling the new_paramter node
+                temp -> sibling = new_parameter;
 
-                return temp1;
+                return new_parameter;
             }
             temp = temp -> sibling;
         } 
     }
 }
 
+// creating variables
+// made so i can send the root of the tree as well for global variables
 TREE_NODE *make_variable(TREE_NODE **tree, char *name, unsigned type) {
-    /* 
-        prosledjujem tree zbog globalnih promenljivih za koje sad nemam pravilo
-        ali svakako msm da ce biti ovako lakse
-     */
-    // da li funkcija postoji
+    
     if (!(*tree)) {
-        printf("Greska, funkcija ne postoji!\n\n");
+        // does the tree/ function exist
+        printf("Error, function: %s does not exist\n\n", (*tree) -> node_data -> name);
+
         return NULL;
     }
     // prvo provera imena sa parametrima koje funkcija prima
+    // first i need to name check the functions parameters
     TREE_NODE *parameter = (*tree) -> parameter;
     while (parameter) {
         if (!strcmp(parameter -> node_data -> name, name)) {
-            printf("Greska, funckija %s kao parametar prima vec %s\n\n", (*tree) -> node_data -> name, name);
+            printf("Error, function: %s has a parameter named: %s\n\n", (*tree) -> node_data -> name, name);
 
             return NULL;
         }
         parameter = parameter -> sibling;
     }
-    // ne postoji parametar sa tim imenom
+    // no parameters with the same name found
+    // i can now name check the functions children
     TREE_NODE *temp = (*tree) -> child;
-    TREE_NODE *temp1 = NULL;
-    // nema child
+    TREE_NODE *last_sibling = NULL;
     if (!temp) {
+        // has no child
         TREE_NODE *variable = create_node(name, VAR, type, *tree, NULL);
         (*tree) -> child = variable;
 
         return variable;
     }
-    // ima child
     else {
+        // has a child and so need to name check
         while (temp) {
             if (!strcmp(temp -> node_data -> name, name)) {
-                printf("Greska, funckija %s vec ima deklarisanu promenljivu %s\n\n", temp -> parent -> node_data -> name, name);
+                printf("Error, function: %s already has a variable named: %s\n\n", temp -> parent -> node_data -> name, name);
 
                 return NULL;
             }
-            temp1 = temp;
+            last_sibling = temp;
             temp = temp -> sibling;
         }
-        // dosao je do kraja, treba da kreira cvor
+        // found the last sibling
         TREE_NODE *variable = create_node(name, VAR, type, *tree, NULL);
-        temp1 -> sibling = variable;
+        last_sibling -> sibling = variable;
 
         return variable;
     }
 }
 
+// creating literals
 TREE_NODE *make_literal(TREE_NODE **tree, char *name, unsigned type) {
     TREE_NODE *temp = (*tree) -> child;
-    TREE_NODE *temp1 = NULL;
-    // nema child
+    TREE_NODE *last_sibling = NULL;
+
     if (!temp) {
+        // has no child
         TREE_NODE *literal = create_node(name, LIT, type, *tree, NULL);
         (*tree) -> child = literal;
 
         return literal;
     }
-    // ima child
     else {
+        // has a child
         while (temp) {
-            temp1 = temp;
+            last_sibling = temp;
             temp = temp -> sibling;
         }
-        // dosao je do kraja, treba da kreira cvor
+        // found the last sibling
         TREE_NODE *literal = create_node(name, LIT, type, *tree, NULL);
-        temp1 -> sibling = literal;
+        last_sibling -> sibling = literal;
 
         return literal;
     }
 }
 
+// fining a node
 TREE_NODE *find_node(TREE_NODE **root, char *name) {
     TREE_NODE *temp = NULL;
 
+    // root is either the actual root or is a function
     if (!strcmp((*root) -> node_data -> name, name)) {
         return *root;
     }
+    // if its a function i need to check its parameters
     if ((*root) -> node_data -> kind == FUN) {
         temp = find_node(&((*root) -> parameter), name);
         if (temp) {
+            // if its not NULL its been found and can be returned, and in this case its a function parameter
             return temp;
         }
     }
     if ((*root) -> child) {
         temp = find_node(&((*root) -> child), name);
         if (temp) {
+            // if its not NULL its been found and can be returned, and in this case its a something
             return temp;
         }
     }
     if ((*root) -> sibling) {
         temp = find_node(&((*root) -> sibling), name);
         if (temp) {
+            // if its not NULL its been found and can be returned, and in this case its a something
             return temp;
         }
     }
-    
+    // hasnt found any node that has the name name
+    return NULL;
 }
 
+// finding functions
+// i dont really know why i made this function when theres a find node up above
 TREE_NODE *find_function(TREE_NODE **root, char *name) {
     TREE_NODE *temp = NULL;
     
@@ -238,19 +276,23 @@ TREE_NODE *find_function(TREE_NODE **root, char *name) {
     }
     return NULL;
 }
-
+// also no idea why this exists 
 TREE_NODE *find_f(TREE_NODE **root, char *name) {
     if ((*root) -> child) {
         return find_function(&((*root) -> child), name);
     }
 }
 
+// TODO:
+
+// updating nodes, mostly for updating literals and values of parameters and variables 
 TREE_NODE *update_node(TREE_NODE **root, char *name, unsigned update_type) {
+    // finding the node which is to be updated
     TREE_NODE *temp = find_node(root, name);
-    int i;
     int type = temp -> node_data -> type;
-    char *s = malloc(sizeof(char *));
     temp = temp -> child;
+    int i;
+    char *s = malloc(sizeof(char *));
 
     if (type == INT) {
         if (update_type == 1) {
