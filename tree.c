@@ -428,75 +428,30 @@ TREE_NODE *get_sibling(TREE_NODE **tree, TREE_NODE **is_sibling) {
 // this fucking shit show
 TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int arop) {
     char *s = get_arop(arop);
-    
-    // TODO:
-    // i need to send the node which id is in the assignment and make the arop_node its child and not the child of the one that points to it as its sibling
-
-
-
-    // printf("%s\n\n", s);
-    printf("%s\n\n", (*exp1) -> node_data -> name);
-    printf("its parent is %s\n\n", (*exp1) -> parent -> node_data -> name);
-
     // ok so i get the node whose sibling is exp1
     TREE_NODE *sibling = get_sibling(tree, exp1);
-
-    printf("who points to exp1 : %s\n\n", sibling -> node_data -> name);
-
-    // printf("here tree is : %s\n\n", (*tree) -> node_data -> name);
-
-    // TREE_NODE *ssibling = get_sibling(tree, &sibling);
-    // printf("ovo treba da je c %s\n\n", ssibling -> node_data -> name);
-
-    // i know i know i know
 
     if (!sibling) {
         // if the variable is the first declared variable then there is nothing that has a sibling of said variable
         // this varible is then just the child of tree
         sibling = (*tree) -> child;
-        printf("%s\n\n", sibling -> node_data -> name);
     }
 
 
     // i make a node specifically for the arop
     TREE_NODE *arop_node = create_node(s, NO_KIND, NO_TYPE, NULL, NULL);
 
-    // whatever this is for
-    // printf("da li je ovo e %s\n\n", sibling -> node_data -> name);
-    // printf("%s\n\n", sibling -> sibling -> node_data -> name);
-    // printf("%s\n\n", sibling -> sibling -> sibling -> node_data -> name);
-
-    // i make exp1 the child of the arop_node
     arop_node -> child = *exp1;
-    
-    // printf("aaaaaaaa%s\n\n", arop_node -> child -> node_data -> name);
-
-    // 
-    // sibling -> child = arop_node;
-    // printf("da li je od e dete + %s\n\n", sibling -> child -> node_data -> name);
-    // printf("%s\n\n", sibling -> child -> child -> node_data -> name);
-    // printf("%s\n\n", sibling -> child -> sibling -> node_data -> name); // je bilo pre ovog gore sto sad stoji
-
-    // does the sibling not have other siblings if this is ok
-    // makes me think this is not ok
-    // not sure yet
     sibling -> sibling = NULL;
 
-    // sibling -> child = arop_node;
-    // arop_node -> parent = sibling;
-    // printf("%s\n\n", sibling -> child -> node_data -> name);
-
     arop_node -> node_data -> value = malloc(sizeof(VALUE *));
-    // sibling -> node_data -> value = malloc(sizeof(VALUE *));
 
     if ((*exp1) -> node_data -> type == (*exp2) -> node_data -> type) {
         if ((*exp1) -> node_data -> type == INT) {
             arop_node -> node_data -> value -> i = atoi((*exp1) -> node_data -> name) + atoi((*exp2) -> node_data -> name);
-            // sibling -> node_data -> value -> i = arop_node -> node_data -> value -> i;
         }
         else if ((*exp1) -> node_data -> type == UINT) {
             arop_node -> node_data -> value -> u = atoi((*exp1) -> node_data -> name) + atoi((*exp2) -> node_data -> name);
-            // sibling -> node_data -> value -> u = arop_node -> node_data -> value -> u;
         }
     }
     else {
@@ -506,22 +461,6 @@ TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int a
     }
 
     return arop_node;
-    // printf("asaa\n\n");
-    
-    // printf("%d\n\n", arop_node -> node_data -> value -> i);
-    // printf("valhue od e je : %d\n\n", arop_node -> parent -> node_data -> value -> i);
-    // sibling -> node_data -> value = malloc(sizeof(VALUE *));
-    // sibling -> node_data -> value -> i = arop_node -> node_data -> value -> i;
-
-    // update_literal_parent(&arop_node, exp1);
-
-    // printf("aaaaaaaaaaaaaaaaaaa%s\n\n", sibling -> child -> node_data -> name);
-    // printf("%s\n\n", (*exp1) -> node_data -> name);
-    // printf("Aa");
-
-
-    // ssibling = get_sibling(tree, &sibling);
-    // printf("ovo treba da je c %s\n\n", ssibling -> node_data -> name);
 
 }
 
