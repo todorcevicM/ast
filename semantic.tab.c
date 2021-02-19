@@ -95,6 +95,8 @@
     TREE_NODE *current_literal_second = NULL;
     TREE_NODE *current_arop;
 
+    // TREE_NODE *arop;
+
     TREE_NODE *update;
 
     unsigned variable_type = NO_TYPE;
@@ -106,7 +108,7 @@
     
 
 
-#line 110 "semantic.tab.c"
+#line 112 "semantic.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -189,12 +191,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 41 "semantic.y"
+#line 43 "semantic.y"
 
   int i;
   char *s;
 
-#line 198 "semantic.tab.c"
+#line 200 "semantic.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -572,14 +574,14 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    90,    90,    97,    98,   103,   102,   114,   113,   127,
-     128,   132,   133,   137,   147,   151,   152,   157,   156,   164,
-     176,   189,   190,   194,   195,   199,   200,   201,   203,   202,
-     212,   213,   214,   215,   219,   223,   243,   249,   274,   275,
-     291,   295,   302,   306,   314,   317,   324,   340,   357,   356,
-     371,   372,   376,   380,   387,   388,   392,   396,   403,   410,
-     411,   416,   420,   415,   428,   437,   436,   445,   446,   450,
-     451,   455,   456,   460,   465
+       0,    92,    92,    99,   100,   105,   104,   116,   115,   129,
+     130,   134,   135,   139,   149,   153,   154,   159,   158,   166,
+     178,   191,   192,   194,   195,   199,   200,   201,   203,   202,
+     212,   213,   214,   215,   219,   223,   243,   249,   276,   277,
+     293,   297,   304,   308,   316,   319,   326,   342,   359,   358,
+     373,   374,   378,   382,   389,   390,   394,   398,   405,   412,
+     413,   418,   422,   417,   430,   439,   438,   447,   448,   452,
+     453,   457,   458,   462,   467
 };
 #endif
 
@@ -1463,15 +1465,15 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 91 "semantic.y"
+#line 93 "semantic.y"
         {
             print_tree(root);
         }
-#line 1471 "semantic.tab.c"
+#line 1473 "semantic.tab.c"
     break;
 
   case 5:
-#line 103 "semantic.y"
+#line 105 "semantic.y"
             {   
 				TREE_NODE *function = make_function(&root, (yyvsp[0].s), (yyvsp[-1].i));
                 if (!function) {
@@ -1481,11 +1483,11 @@ yyreduce:
                     current_function = function;
                 }
             }
-#line 1485 "semantic.tab.c"
+#line 1487 "semantic.tab.c"
     break;
 
   case 7:
-#line 114 "semantic.y"
+#line 116 "semantic.y"
             {
                 TREE_NODE *function = make_function(&root, (yyvsp[0].s), (yyvsp[-1].i));
                 if (!function) {
@@ -1495,30 +1497,30 @@ yyreduce:
                     current_function = function;
                 }
             }
-#line 1499 "semantic.tab.c"
+#line 1501 "semantic.tab.c"
     break;
 
   case 13:
-#line 138 "semantic.y"
+#line 140 "semantic.y"
             {
                 TREE_NODE *parameter = make_parameter(&current_function, (yyvsp[0].s), (yyvsp[-1].i));
                 if (!parameter) {
                     err("Parametar %s vec postoji kao parametar koji funckija %s prima\n\n", (yyvsp[0].s), current_function -> node_data -> name);
                 }
             }
-#line 1510 "semantic.tab.c"
+#line 1512 "semantic.tab.c"
     break;
 
   case 17:
-#line 157 "semantic.y"
+#line 159 "semantic.y"
             {
                 variable_type = (yyvsp[0].i);
             }
-#line 1518 "semantic.tab.c"
+#line 1520 "semantic.tab.c"
     break;
 
   case 19:
-#line 165 "semantic.y"
+#line 167 "semantic.y"
             {
                 TREE_NODE *variable = make_variable(&current_function, (yyvsp[0].s), variable_type);
                 // TODO: ako uradim ovako onda nemam mogucnost za globalne za sad
@@ -1530,11 +1532,11 @@ yyreduce:
                     // printf("%s\n\n", current_variable -> node_data -> name);
                 }
             }
-#line 1534 "semantic.tab.c"
+#line 1536 "semantic.tab.c"
     break;
 
   case 20:
-#line 177 "semantic.y"
+#line 179 "semantic.y"
             {
                 TREE_NODE *variable = make_variable(&current_function, (yyvsp[0].s), variable_type);
                 if (!variable) {
@@ -1544,7 +1546,7 @@ yyreduce:
                     current_variable = variable;
                 }
             }
-#line 1548 "semantic.tab.c"
+#line 1550 "semantic.tab.c"
     break;
 
   case 28:
@@ -1557,7 +1559,7 @@ yyreduce:
                     }
                 }
             }
-#line 1561 "semantic.tab.c"
+#line 1563 "semantic.tab.c"
     break;
 
   case 35:
@@ -1566,19 +1568,19 @@ yyreduce:
             if (assign_exp != 1) {
                 // printf("nnnn");
                 current_variable = find_node(&current_function, (yyvsp[-3].s));
-                // current_variable -> child = current_arop;
+                current_variable -> child = current_arop;
                 // printf("%s\n\n", current_variable -> child -> node_data -> name);
                 set_value(&current_variable, (yyvsp[-1].i));
             }
             else if (assign_exp == 1) {
                 current_variable = find_node(&current_function, (yyvsp[-3].s));
-                update_value(&current_variable, (yyvsp[-1].i), (yyvsp[-1].i), literal_type);
+                update_value(&current_variable, (yyvsp[-1].i), (yyvsp[-1].i));
             }
             else if (assign_type == 2) {
                 printf("aaaaaaaaa");
             }
         }
-#line 1582 "semantic.tab.c"
+#line 1584 "semantic.tab.c"
     break;
 
   case 36:
@@ -1588,7 +1590,7 @@ yyreduce:
                 // printf("%d\n\n", $1);
                 (yyval.i) = (yyvsp[0].i);
             }
-#line 1592 "semantic.tab.c"
+#line 1594 "semantic.tab.c"
     break;
 
   case 37:
@@ -1605,7 +1607,9 @@ yyreduce:
                     temp1 = find_node(&current_function, current_literal -> node_data -> name);
                     // printf("%s", temp1 -> parent -> node_data -> name);
 
-                    TREE_NODE *arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
+                    current_arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
+
+                    printf("current arop is: %s\n\n", current_arop -> node_data -> name);
 
                     // current_variable -> child = malloc(sizeof(TREE_NODE *));
                     // current_variable -> child = arop;
@@ -1614,11 +1618,11 @@ yyreduce:
 
                     current_literal = NULL;
                 }
-#line 1618 "semantic.tab.c"
+#line 1622 "semantic.tab.c"
     break;
 
   case 39:
-#line 276 "semantic.y"
+#line 278 "semantic.y"
             {   
                 if (post_op_op_var) {
                     current_variable = update_node(&current_function, (yyvsp[-1].s), post_operator); 
@@ -1634,59 +1638,59 @@ yyreduce:
                     (yyval.i) = current_variable -> node_data -> value -> u; 
                 }
             }
-#line 1638 "semantic.tab.c"
+#line 1642 "semantic.tab.c"
     break;
 
   case 40:
-#line 292 "semantic.y"
+#line 294 "semantic.y"
             {
                 // TODO: 
             }
-#line 1646 "semantic.tab.c"
+#line 1650 "semantic.tab.c"
     break;
 
   case 41:
-#line 296 "semantic.y"
+#line 298 "semantic.y"
             {
                 // TODO: 
             }
-#line 1654 "semantic.tab.c"
+#line 1658 "semantic.tab.c"
     break;
 
   case 42:
-#line 303 "semantic.y"
+#line 305 "semantic.y"
             {
                 post_operator = 1;
             }
-#line 1662 "semantic.tab.c"
+#line 1666 "semantic.tab.c"
     break;
 
   case 43:
-#line 307 "semantic.y"
+#line 309 "semantic.y"
             {
                 post_operator = 2;
             }
-#line 1670 "semantic.tab.c"
+#line 1674 "semantic.tab.c"
     break;
 
   case 44:
-#line 314 "semantic.y"
+#line 316 "semantic.y"
         {
             post_op_op_var = 0;
         }
-#line 1678 "semantic.tab.c"
+#line 1682 "semantic.tab.c"
     break;
 
   case 45:
-#line 318 "semantic.y"
+#line 320 "semantic.y"
         {
             post_op_op_var = post_operator;
         }
-#line 1686 "semantic.tab.c"
+#line 1690 "semantic.tab.c"
     break;
 
   case 46:
-#line 325 "semantic.y"
+#line 327 "semantic.y"
             {   
                 literal_type = 1;
 
@@ -1702,11 +1706,11 @@ yyreduce:
                 }
 
             }
-#line 1706 "semantic.tab.c"
+#line 1710 "semantic.tab.c"
     break;
 
   case 47:
-#line 341 "semantic.y"
+#line 343 "semantic.y"
             {   
                 literal_type = 2;
                 
@@ -1719,11 +1723,11 @@ yyreduce:
                     (yyval.i) = atoi(current_literal_second -> node_data -> name);
                 }
             }
-#line 1723 "semantic.tab.c"
+#line 1727 "semantic.tab.c"
     break;
 
   case 48:
-#line 357 "semantic.y"
+#line 359 "semantic.y"
             {
                 // TODO: 
                 TREE_NODE *function = find_f(&root, (yyvsp[0].s));
@@ -1731,105 +1735,105 @@ yyreduce:
                     err("Greska, funkcija %s nije pronadjena\n\n", (yyvsp[0].s));
                 }
             }
-#line 1735 "semantic.tab.c"
+#line 1739 "semantic.tab.c"
     break;
 
   case 49:
-#line 365 "semantic.y"
+#line 367 "semantic.y"
             {
                 // TODO: 
             }
-#line 1743 "semantic.tab.c"
+#line 1747 "semantic.tab.c"
     break;
 
   case 52:
-#line 377 "semantic.y"
+#line 379 "semantic.y"
             {
                 // TODO: 
             }
-#line 1751 "semantic.tab.c"
+#line 1755 "semantic.tab.c"
     break;
 
   case 53:
-#line 381 "semantic.y"
+#line 383 "semantic.y"
             {
                 // TODO: 
             }
-#line 1759 "semantic.tab.c"
+#line 1763 "semantic.tab.c"
     break;
 
   case 57:
-#line 397 "semantic.y"
+#line 399 "semantic.y"
             {
                 // TODO: 
             }
-#line 1767 "semantic.tab.c"
+#line 1771 "semantic.tab.c"
     break;
 
   case 58:
-#line 404 "semantic.y"
+#line 406 "semantic.y"
             {
                 // TODO: 
             }
-#line 1775 "semantic.tab.c"
+#line 1779 "semantic.tab.c"
     break;
 
   case 61:
-#line 416 "semantic.y"
+#line 418 "semantic.y"
             {
                 // TODO: 
             }
-#line 1783 "semantic.tab.c"
+#line 1787 "semantic.tab.c"
     break;
 
   case 62:
-#line 420 "semantic.y"
+#line 422 "semantic.y"
             {
                 // TODO: 
 
             }
-#line 1792 "semantic.tab.c"
+#line 1796 "semantic.tab.c"
     break;
 
   case 64:
-#line 429 "semantic.y"
+#line 431 "semantic.y"
             {
                 // TODO: 
 
             }
-#line 1801 "semantic.tab.c"
+#line 1805 "semantic.tab.c"
     break;
 
   case 65:
-#line 437 "semantic.y"
+#line 439 "semantic.y"
             {
                 // TODO: 
 
             }
-#line 1810 "semantic.tab.c"
+#line 1814 "semantic.tab.c"
     break;
 
   case 73:
-#line 461 "semantic.y"
+#line 463 "semantic.y"
             {
                 // TODO: 
                 // if (current_function -> type != )
             }
-#line 1819 "semantic.tab.c"
+#line 1823 "semantic.tab.c"
     break;
 
   case 74:
-#line 466 "semantic.y"
+#line 468 "semantic.y"
             {
                 if (current_function -> node_data -> type != VOID) {
                     warn("Int/Uint function is without number expression in the return statement");
                 }
             }
-#line 1829 "semantic.tab.c"
+#line 1833 "semantic.tab.c"
     break;
 
 
-#line 1833 "semantic.tab.c"
+#line 1837 "semantic.tab.c"
 
       default: break;
     }
@@ -2061,7 +2065,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 473 "semantic.y"
+#line 475 "semantic.y"
 
 
 int yyerror(char *s) {

@@ -50,7 +50,7 @@ TREE_NODE *set_value(TREE_NODE **tree, int value);
 TREE_NODE *update_literal_parent(TREE_NODE **tree, TREE_NODE **literal);
 TREE_NODE *get_sibling(TREE_NODE **tree, TREE_NODE **is_sibling);
 TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int arop);
-TREE_NODE *update_value(TREE_NODE **variable, int value, unsigned value_u, unsigned literal_type);
+TREE_NODE *update_value(TREE_NODE **variable, int value, unsigned value_u);
 
 char *get_arop(int a);
 

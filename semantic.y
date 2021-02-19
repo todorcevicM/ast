@@ -26,6 +26,8 @@
     TREE_NODE *current_literal_second = NULL;
     TREE_NODE *current_arop;
 
+    // TREE_NODE *arop;
+
     TREE_NODE *update;
 
     unsigned variable_type = NO_TYPE;
@@ -187,9 +189,7 @@ variables
 
 statement_list
     :   /*  */
-    |   statements
-    ;
-
+    |   statements 
 statements
     :   statement 
     |   statements statement 
@@ -225,13 +225,13 @@ assignment_statement
             if (assign_exp != 1) {
                 // printf("nnnn");
                 current_variable = find_node(&current_function, $1);
-                // current_variable -> child = current_arop;
+                current_variable -> child = current_arop;
                 // printf("%s\n\n", current_variable -> child -> node_data -> name);
                 set_value(&current_variable, $3);
             }
             else if (assign_exp == 1) {
                 current_variable = find_node(&current_function, $1);
-                update_value(&current_variable, $3, $3, literal_type);
+                update_value(&current_variable, $3, $3);
             }
             else if (assign_type == 2) {
                 printf("aaaaaaaaa");
@@ -259,7 +259,9 @@ num_exp
                     temp1 = find_node(&current_function, current_literal -> node_data -> name);
                     // printf("%s", temp1 -> parent -> node_data -> name);
 
-                    TREE_NODE *arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
+                    current_arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
+
+                    printf("current arop is: %s\n\n", current_arop -> node_data -> name);
 
                     // current_variable -> child = malloc(sizeof(TREE_NODE *));
                     // current_variable -> child = arop;
