@@ -421,11 +421,15 @@ TREE_NODE *get_sibling(TREE_NODE **tree, TREE_NODE **is_sibling) {
     }  
 }
 
+// TODO:
+// this fucking shit works only for literals, and doesnt work for variables and parameters and everything else 
+
+// see, why was i such a fucking idiot as to only send literals when the fucntion obviously takes in expressions
+
 
 
 // this shouldnt have attaching the arop_node to the variable that it should be assigned to 
 // it should be done seperately as it spans two sematnic rules 
-// this fucking shit show
 TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int arop) {
     char *s = get_arop(arop);
     // ok so i get the node whose sibling is exp1
@@ -437,16 +441,20 @@ TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int a
         sibling = (*tree) -> child;
     }
 
-
     // i make a node specifically for the arop
     TREE_NODE *arop_node = create_node(s, NO_KIND, NO_TYPE, NULL, NULL);
 
+    // ok so the arop_node should obviously have a child that is exp1
     arop_node -> child = *exp1;
+    // ok so its sibling shouldnt exist anymore or it will print it once its called as a sibling
+    // and will connect to it rather than to sibling node
     sibling -> sibling = NULL;
 
     arop_node -> node_data -> value = malloc(sizeof(VALUE *));
 
+    // type check
     if ((*exp1) -> node_data -> type == (*exp2) -> node_data -> type) {
+        // value assignment
         if ((*exp1) -> node_data -> type == INT) {
             arop_node -> node_data -> value -> i = atoi((*exp1) -> node_data -> name) + atoi((*exp2) -> node_data -> name);
         }
@@ -461,7 +469,6 @@ TREE_NODE *make_arop(TREE_NODE **tree, TREE_NODE **exp1, TREE_NODE **exp2, int a
     }
 
     return arop_node;
-
 }
 
 char* get_arop(int a) {
@@ -485,10 +492,10 @@ unsigned print_tree(TREE_NODE *tree) {
 
     if (tree) {
         unsigned size = 0;
-        // char *type_s;
-        // char *kind_s;
-        // char *s;
-        // s = "";
+
+        // char *type_s = malloc(sizeof(char *));
+        // char *kind_s = malloc(sizeof(char *));
+        // char *s = "";
         // printf("%s", s);
         // sprintf(type_s, "%d", tree -> node_data -> type);
         // sprintf(kind_s, "%d", tree -> node_data -> kind);
@@ -512,8 +519,7 @@ unsigned print_tree(TREE_NODE *tree) {
         }
         if (tree -> node_data -> type == NO_TYPE) {
             size++;
-        }
-        
+        }        
         if (indent == 2) {
             size += 1;
         }
@@ -529,7 +535,6 @@ unsigned print_tree(TREE_NODE *tree) {
         for (i = 0; i < indent; i++) {
             printf("\t");
         }
-        // printf("%s", s);
         printf("|Node name: %s; Node type: %u; Node kind: %u|\n", 
             tree -> node_data -> name, tree -> node_data -> type, tree -> node_data -> kind);
         for (i = 0; i < indent; i++) {

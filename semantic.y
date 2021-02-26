@@ -26,7 +26,16 @@
     TREE_NODE *current_literal_second = NULL;
     TREE_NODE *current_arop;
 
-    // TREE_NODE *arop;
+    // TODO:
+    // i need like a current_node and previous_current_node for like arops, since it doenst need to be a literal in it
+    // and can be parameters and variables and whatnot
+
+    // now this only needs to be set in num_exp and exp rules since only there can variables and parameters be used in assignmetns or whatever
+
+    // this first one is for saving the last used node
+    // the second one is for saving the second to last used node
+    TREE_NODE *current_node = NULL;
+    TREE_NODE *previous_current_node = NULL;
 
     TREE_NODE *update;
 
@@ -37,7 +46,6 @@
     unsigned assign_exp = 0;
     unsigned post_op_op_var = -1;
     
-
 %}
 
 %union {
@@ -172,7 +180,6 @@ variables
                 }
                 else {
                     current_variable = variable;
-                    // printf("%s\n\n", current_variable -> node_data -> name);
                 }
             }
     |   variables COMMA ID
@@ -223,10 +230,8 @@ assignment_statement
     : ID ASSIGN num_exp SEMICOLON
         {   
             if (assign_exp != 1) {
-                // printf("nnnn");
                 current_variable = find_node(&current_function, $1);
                 current_variable -> child = current_arop;
-                // printf("%s\n\n", current_variable -> child -> node_data -> name);
                 set_value(&current_variable, $3);
             }
             else if (assign_exp == 1) {
@@ -234,7 +239,6 @@ assignment_statement
                 update_value(&current_variable, $3, $3);
             }
             else if (assign_type == 2) {
-                printf("aaaaaaaaa");
             }
         }
     ;
@@ -243,37 +247,30 @@ num_exp
     :   exp 
             {
                 assign_type = 1;
-                // printf("%d\n\n", $1);
                 $$ = $1;
             }
     |   num_exp AROP exp 
                 {   
-                    // TODO: 
                     int a = $2;
-                    // printf("%d\t%s\t%d\n\n", $1, get_arop(a), $3);
                     assign_type = 2;
 
-
-                    TREE_NODE *temp1 = NULL;
-
-                    temp1 = find_node(&current_function, current_literal -> node_data -> name);
-                    // printf("%s", temp1 -> parent -> node_data -> name);
-
+                    // TODO:
+                    // here i need to send not literals but just nodes which can be literals but arent neccessarily 
+                    // how will that translate in the make_arop function is my question
                     current_arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
-
-                    printf("current arop is: %s\n\n", current_arop -> node_data -> name);
-
-                    // current_variable -> child = malloc(sizeof(TREE_NODE *));
-                    // current_variable -> child = arop;
-                    // printf("%s\n\n", current_variable -> child -> node_data -> name);
-
-
+                    // i honestly think just replacing the current_literal with current_node and current_literal_second with previous_current_literal will be enough but im on the fence
                     current_literal = NULL;
                 }
     ;
 
 exp 
     :   literal 
+            {
+                if (current_node) {
+                    previous_current_node = current_node;
+                }
+                current_node = current_literal;
+            }
     |   ID post_op_op
             {   
                 if (post_op_op_var) {
@@ -289,14 +286,23 @@ exp
                 else if (current_variable -> node_data -> type == UINT) {
                     $$ = current_variable -> node_data -> value -> u; 
                 }
+                
+                if (current_node) {
+                    previous_current_node = current_node;
+                }
+                current_node = current_variable;
             }
     |   function_call
             {
-                // TODO: 
+                // // whenever a function gets called its return value needs to be writen in a register 
+                // $$ = take_reg();
+                // // and it needs to be moved from the FUN_REG to the taken register
+                // gen_mov(FUN_REG, $$);
             }
     |   LPAREN num_exp RPAREN
             {
-                // TODO: 
+                // this cant be just this i think, not sure yetodod
+                $$ = $2;
             }
     ;
 
@@ -329,12 +335,10 @@ literal
 
                 if (!current_literal) {
                     current_literal = make_literal(&current_function, $1, literal_type);
-                    // printf("%s\n\n", current_literal -> node_data -> name);
                     $$ = atoi(current_literal -> node_data -> name);
                 }
                 else {
                     current_literal_second = make_literal(&current_function, $1, literal_type);
-                    // printf("%s\n\n", current_literal_second -> node_data -> name);
                     $$ = atoi(current_literal_second -> node_data -> name);
                 }
 
