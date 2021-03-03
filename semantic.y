@@ -19,6 +19,10 @@
   int fcall_idx = -1;
 
 
+    // so arop_node can be a child in an arop operation and so i need to make the current_node be able to accept the arop_node as its child, and i only need to do it if the assignment isnt finished
+    unsigned finished_assignment = 0;
+
+
     TREE_NODE *root;
     TREE_NODE *current_function;
     TREE_NODE *current_variable;
@@ -240,6 +244,8 @@ assignment_statement
             }
             else if (assign_type == 2) {
             }
+
+            finished_assignment = 1;
         }
     ;
 
@@ -259,7 +265,24 @@ num_exp
                     // how will that translate in the make_arop function is my question
                     current_arop = make_arop(&current_function, &current_literal, &current_literal_second, a);
                     // i honestly think just replacing the current_literal with current_node and current_literal_second with previous_current_literal will be enough but im on the fence
-                    current_literal = NULL;
+
+                    // this is not enough
+                    // current_literal = NULL;
+
+                    // ah i see, once i make the arop_node since it too can be a child of someone i should make the current_literal equal the arop_node if the assignment isnt finished parsing
+                    if (!finished_assignment) {
+                        if (current_node) {
+                            previous_current_node = current_node;
+                        }
+                        current_node = current_arop;
+                    }
+                    // next question is where to set the finished_assignment back to 0
+                    // i mean is it fine if its just here?
+                    else {
+                        finished_assignment = 0;
+                    }
+                    
+
                 }
     ;
 
